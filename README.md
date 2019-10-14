@@ -1,6 +1,3 @@
-#astro-db
-database of astronomical objects
+#astro-dbv2
+database of astronomical objects WITH ARRAYS 
 
-[x] entire working program 
-
-TODO: finish commenting and full bug check
