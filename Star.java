@@ -5,12 +5,12 @@
 
 public class Star {
 
+	final private int MAX_PLANETS = 2;
 	private static int numberOfStars = 0;
 	
 	private String name, sType;
 	private double ra, dec;
-	private Planet planet1 = new Planet();
-	private Planet planet2 = new Planet();
+	private Planet Planet[] = new Planet[MAX_PLANETS];
 	
 	// returns number of stars currently in the database
 	public static int numberOfStars() {
@@ -158,7 +158,12 @@ public class Star {
 		this.sType = sType;
 	}
 	
-	
-	
+	/*
+	public static String checkForMaxStars() {
+		if (Star.numberOfStars == 2)
+			return ("There are already 2 stars in the database! Please delete one and try again.");
+		return;
+	}
+	*/
 	
 }

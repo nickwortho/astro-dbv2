@@ -8,8 +8,8 @@ import java.util.Scanner;
 
 public class Interface {
 	
-	private Star star1 = new Star();
-	private Star star2 = new Star(); // stores up to 2 star objects
+	final private int MAX_STARS = 2;
+	private Star Star[] = new Star[MAX_STARS];
 	
 	private void run(){
 		
@@ -25,22 +25,7 @@ public class Interface {
 			int loop; // variable used to determine running of various while loops
 			double angDistance;
 			
-			// menu of actions for user to pick
-			System.out.println("*********************************************");
-			System.out.println("Welcome to your astronomical object database.");
-			System.out.println("*********************************************");
-			System.out.println("Please choose an action:");
-			System.out.println("1 - Add a star");
-			System.out.println("2 - Add a planet");
-			System.out.println("3 - Delete a star");
-			System.out.println("4 - Delete a planet");
-			System.out.println("5 - Display list of all objects");
-			System.out.println("6 - Display list of planets orbitting a star");
-			System.out.println("7 - Find angular distance between 2 objects");
-			System.out.println("8 - Find objects within a set angular distance of a certain object");
-			System.out.println();
-			System.out.println("9 - Quit program\n");
-			
+			showMenu();
 			int action = console.nextInt(); // stores users choice of action
 			console.nextLine();
 			
@@ -837,9 +822,27 @@ public class Interface {
 		console.close();
 	}
 	
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		Interface intFace = new Interface();
 		intFace.run();
+	}
+	
+	public static void showMenu() {
+		// menu of actions for user to pick
+					System.out.println("*********************************************");
+					System.out.println("Welcome to your astronomical object database.");
+					System.out.println("*********************************************");
+					System.out.println("Please choose an action:");
+					System.out.println("1 - Add a star");
+					System.out.println("2 - Add a planet");
+					System.out.println("3 - Delete a star");
+					System.out.println("4 - Delete a planet");
+					System.out.println("5 - Display list of all objects");
+					System.out.println("6 - Display list of planets orbitting a star");
+					System.out.println("7 - Find angular distance between 2 objects");
+					System.out.println("8 - Find objects within a set angular distance of a certain object");
+					System.out.println();
+					System.out.println("9 - Quit program\n");
 	}
 	
 	// Checks whether a given right ascension (ra) is within the valid range 0 <= ra <= 360
