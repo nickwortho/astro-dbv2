@@ -9,7 +9,8 @@ import java.util.Scanner;
 public class Interface {
 	
 	final private int MAX_STARS = 2;
-	private Star Star[] = new Star[MAX_STARS];
+	private Star[] stars = new Star[MAX_STARS];
+	private int totalStars = 0;
 	
 	private void run(){
 		
@@ -34,9 +35,9 @@ public class Interface {
 			switch(action) {
 				case 1: // Add a star
 					
-					// returns an error if 2 stars already exist in database
-					if (Star.numberOfStars() == 2) {
-						System.out.println("There are already 2 stars in the database! Please delete one and try again."); 
+					// returns an error if max stars already exist in database
+					if (totalStars == MAX_STARS) {
+						System.out.println("The database is full of stars! Please delete one and try again."); 
 						break;
 					}
 					
@@ -55,13 +56,11 @@ public class Interface {
 							loop = 1; // prompts user again for star name
 							continue;
 						}
-						
-						if (name.equalsIgnoreCase(star1.getName())) { 
-							System.out.println("This star already exists in the database! Please enter a different name"); // if there exists a star name, checks if it is the same as user input	
-							loop = 1; // prompts user again for star name
-						} else if (name.equalsIgnoreCase(star2.getName())) { 
-							System.out.println("This star already exists in the database! Please enter a different name");	// if there exists a star name, checks if it is the same as user input
-							loop = 1; // prompts user again for star name
+						for(int i = 0; i<totalStars; i++) {
+							if(name.equalsIgnoreCase(stars[i].getName())) {
+								System.out.println("This star already exists in the database! Please enter a different name"); // if there exists a star name, checks if it is the same as user input	
+								loop = 1; // prompts user again for star name
+							}
 						}
 					} while (loop == 1);
 					
@@ -92,38 +91,38 @@ public class Interface {
 							System.out.println("Error. Spectral type must be a letter (OBAFGKM) followed by a whole number (0-9)"); // error for invalid spectral type
 					} while (!(sType.matches("[OBAFGKM][0-9]")));// prompts user again for spectral type if not valid
 					
-					if (!(star1.starExists())) { // creates a star in star1 if no stars already exist
-						star1.setStar(name, ra, dec, sType); // instantiates star 1
-						System.out.println("\nStar added!");
-						star1.getStarInfo(); // Displays added star back to user
-					} else { // creates a star in star 2 if there exists a star 1 but no star 2
-						star2.setStar(name, ra, dec, sType); // instantiates star 2
-						System.out.println("\nStar added!"); 
-						star2.getStarInfo(); // Displays added star back to user
-					} 
+					for(int i = 0; i<totalStars; i++) { 
+						if(!(stars[i].starExists())) { //creates a star in first empty array element
+							stars[i].setStar(name, ra, dec, sType); //instantiates star
+							System.out.println("/nStar added!");
+							stars[i].getStarInfo(); //displays added star back to user
+						}
+					}
+					
 					break;
 					
 				case 2: // Add a planet 
 					
 					// returns error if no stars in the database to add a planet to
-					if (star1.getName() == "" && star2.getName() == "") {
+					if (totalStars == 0) {
 						System.out.println("You must have at least one star in the database before adding a planet.");
 						break;
 					}
 					
-					// returns error if there are 2 stars each with 2 orbiting planets already in the database
-					if (star1.numberOfPlanets() == 2 && star2.numberOfPlanets() == 2) {
-						System.out.println("There are already 2 planets for each star in the database!");
-						break;
-					// returns error if the only star (star1) in the database already has 2 orbiting planets
-					} else if(star1.numberOfPlanets() == 2 && !(star2.starExists())) {
-						System.out.println("The only star in the database already has two orbiting planets!");
-						break;
-						// returns error if the only star (star2) in the database already has 2 orbiting planets
-					} else if(star2.numberOfPlanets() == 2 && !(star1.starExists())) {
-						System.out.println("The only star in the database already has two orbiting planets!");
+					// returns error if there is no room for a planet in the database
+					int roomForPlanet = 0;
+					while(roomForPlanet == 0) {
+						for(int i = 0; i<totalStars; i++) {
+							if(stars[i].numberOfPlanets() != Star.getMaxPlanets()) {
+								roomForPlanet = 1;
+							}
+						}
+					}
+					if(roomForPlanet == 0) {
+						System.out.println("There is no room for another planet in the database!");
 						break;
 					}
+				
 					
 					System.out.println("\nAdding a planet...\n");
 					
@@ -134,23 +133,21 @@ public class Interface {
 						
 						// prompts user for star of which the planet orbits
 						System.out.println("Which star does the planet orbit: ");
-						if(star1.starExists() && star1.numberOfPlanets() != 2) System.out.println(star1.getName());
-						if(star2.starExists() && star2.numberOfPlanets() != 2) System.out.println(star2.getName());
+						//prints list of current stars
+						for(int i = 0; i<totalStars; i++) {
+							if(stars[i].starExists() && stars[i].numberOfPlanets() != 2) System.out.println(stars[i].getName());
+						}
 						
 						orbitedStar = console.nextLine().toLowerCase(); // converts orbited star input to lower case
 						
-						if(orbitedStar.equals(star1.getName())) orbitedStarInt = 1;
-						if(orbitedStar.equals(star2.getName())) orbitedStarInt = 2;
+						//matches user input star to an integer value orbitedStarInt
+						for(int i = 0; i<totalStars; i++) {
+							if(orbitedStar.equals(stars[i].getName())) orbitedStarInt = (i + 1);
+						}
 						
-						
-						if(orbitedStarInt == 0) { // returns error if orbited star entered does not exist
-							System.out.println("That star does not exist, try again.");
-						} else if(orbitedStarInt == 1 && star1.numberOfPlanets() == 2) { // returns error if orbited star entered has 2 orbitting planets
-								System.out.println("This star already has two orbitters!");
-								orbitedStarInt = 0; //reset to 0 solely to continue loop
-						} else if(orbitedStarInt == 2 && star2.numberOfPlanets() == 2) { // returns error if orbited star entered has 2 orbitting planets
-								System.out.println("This star already has two orbitters!");
-								orbitedStarInt = 0; //reset to 0 solely to continue loop
+						if(stars[orbitedStarInt - 1].numberOfPlanets() == 2) { // returns error if orbited star entered has 2 orbiting planets
+							System.out.println("This star already has two orbitters!");
+							orbitedStarInt = 0; //reset to 0 solely to continue loop
 						}
 		
 					} while (orbitedStarInt == 0);
@@ -160,23 +157,19 @@ public class Interface {
 					do {
 						loop = 0;
 						System.out.println("Planet name: ");
-						name = console.nextLine().toLowerCase(); // stores user input of star name in lower case
+						name = console.nextLine().toLowerCase(); // stores user input of planet name in lower case
 						if (name.isEmpty()) {
 							System.out.println("Planet name must not be blank!"); // error check for if user enters a blank name
 							loop = 1;
 							continue;
 						}
 						
-						
-						if(name.equals(star1.getPlanetName(1)) || name.equals(star1.getPlanetName(2))) { // returns error if planet is already in orbit around star
-							System.out.println("This planet already exists orbiting this star in the database! Please enter a different name"); 
-							loop = 1;
-						} else if (name.equals(star2.getPlanetName(1)) || name.equals(star2.getPlanetName(2))) { // returns error if planet is already in orbit around star
-							System.out.println("This planet already exists orbiting this star in the database! Please enter a different name");	
-							loop = 1;
-						} else if (name.equals(star1.getName()) || name.equals(star2.getName())) { // returns error if a star exists with the input planet name
-							System.out.println("A star under this name already exists in the database. Please enter a different name");
-							loop = 1;
+						//checks for planets already in orbit of input star with input name
+						for(int i = 0; i<Star.getMaxPlanets(); i++) { 
+							if(name.equals(stars[orbitedStarInt - 1].getPlanetName(i))) {
+								System.out.println("This planet already exists orbiting this star in the database! Please enter a different name");
+								loop = 1;
+							}
 						}
 						
 					} while (loop == 1);
@@ -202,29 +195,20 @@ public class Interface {
 					
 					
 					// adding the planet
-					if(orbitedStar.equals(star1.getName())) { // if star 1 chosen as orbitting star
-						if(!(star1.planetExists(1))) { // if planet 1 of star 1 doesnt exist, creates it
-							star1.addPlanet(1, name, ra, dec);
-						} else if(!(star1.planetExists(2))) { // otherwise if planet 1 exists, creates it as planet 2
-							star1.addPlanet(2, name, ra, dec);
+					for(int i = 0; i<Star.getMaxPlanets(); i++) { //adds planet in first vacant array position
+						if(stars[orbitedStarInt - 1].getPlanetName(i) != "") {
+							stars[orbitedStarInt - 1].addPlanet(i, name, ra, dec);
+							break;
 						}
-						System.out.println("Planet "+name+" added");
-					}
-					if(orbitedStar.equals(star2.getName())) {
-						if(!(star2.planetExists(1))) { // if planet 1 of star 2 doesnt exist, creates it
-							star2.addPlanet(1, name, ra, dec);
-						} else if(!(star2.planetExists(2))) { // otherwise if planet 1 exists, creates it as planet 2
-							star2.addPlanet(2, name, ra, dec);
-						}
-						System.out.println("Planet "+name+" added");
 					}
 					
 					break;
 					
 					
 				case 3: // Delete a star
+					int nameInt = 0;
 					
-					if(Star.numberOfStars() == 0) { // error check if no stars exist in the database
+					if(totalStars == 0) { // error check if no stars exist in the database
 						System.out.println("No stars currently in the database!");
 						break;
 					}
@@ -233,16 +217,23 @@ public class Interface {
 					System.out.println("Enter name of the star would you like to delete:");
 					name = console.nextLine(); // assigns input for star name to name
 					
-					// deleting the star
-					if((name.toLowerCase()).equals(star1.getName())) { // if star 1 was chosen, delete it
-						star1.deleteStar();
-						System.out.println("Star "+name+" deleted!");
-					} else if ((name.toLowerCase()).equals(star2.getName())) { // if star 2 was chosen, delete it
-						star2.deleteStar();
-						System.out.println("Star "+name+" deleted!");
-					} else {
-						System.out.println("Star does not exist!"); // returns error if chosen star does not exist in the database
+					for(int i = 0; i<totalStars; i++) {
+						if(name.toLowerCase().equals(stars[i].getName())) nameInt = (i + 1);
 					}
+					
+					// deleting the star
+					int starExists = 0;
+					while (starExists == 0) {
+						for(int i = 0; i<totalStars; i++) {
+							if(name.toLowerCase().equals(stars[i].getName())) { //if input star is found in database, deletes it
+								stars[i].deleteStar();
+								System.out.println("Star "+name+" deleted!");
+								starExists = 1;
+								break;
+							}
+						}
+					}
+					if(starExists == 0) System.out.println("Star does not exist in database!"); //returns error if chosen star does not exist in the database
 					
 					break;
 					
@@ -252,7 +243,7 @@ public class Interface {
 					
 					System.out.println("\nDeleting a planet...\n");
 					
-					if(Star.numberOfStars() == 0) { // returns error if no planets exist in the database
+					if(totalStars == 0) { // returns error if no planets exist in the database
 						System.out.println("No planets currently in the database!");
 						break;
 					}
@@ -326,7 +317,7 @@ public class Interface {
 					
 				case 5: // Display list of all objects
 					
-					if(Star.numberOfStars() == 0) { // returns error if no objects exist in the database
+					if(totalStars == 0) { // returns error if no objects exist in the database
 						System.out.println("No astronomical objects exist in database!");
 						break;
 					}
@@ -357,7 +348,7 @@ public class Interface {
 					
 				case 6: // Display list of planets orbiting a star
 
-					if(Star.numberOfStars() == 0) { // error check for if there are no stars in database (therefore no planets)
+					if(totalStars == 0) { // error check for if there are no stars in database (therefore no planets)
 						System.out.println("No planets currently in the database!");
 						break;
 					} else if(star2.numberOfPlanets() == 0 && star1.numberOfPlanets() == 0) {  // error check for if there are no planets in database
@@ -416,10 +407,10 @@ public class Interface {
 					
 					System.out.println("\nFinding angular distance between 2 objects...\n");
 					
-					if(Star.numberOfStars() == 0) { // error check for if there are no stars in database (therefore no objects)
+					if(totalStars == 0) { // error check for if there are no stars in database (therefore no objects)
 						System.out.println("No objects currently in the database!");
 						break;
-					} else if (Star.numberOfStars() == 1) { // error check for if there is only one object in database
+					} else if (totalStars == 1) { // error check for if there is only one object in database
 						if (star1.numberOfPlanets() == 0 && star2.numberOfPlanets() == 0) { 
 							System.out.println("There is only one object in the database!");
 							break;
@@ -546,10 +537,10 @@ public class Interface {
 					
 					System.out.println("\nFinding objects within a set angular distance of an object...\n");
 					
-					if(Star.numberOfStars() == 0) { // returns error if there are no stars in database (therefore no objects)
+					if(totalStars == 0) { // returns error if there are no stars in database (therefore no objects)
 						System.out.println("No objects currently in the database!");
 						break;
-					} else if (Star.numberOfStars() == 1) { // returns error if there is only one object in database
+					} else if (totalStars == 1) { // returns error if there is only one object in database
 						if (star1.numberOfPlanets() == 0 && star2.numberOfPlanets() == 0) {
 							System.out.println("There is only one object currently in the database!");
 							break;

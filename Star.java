@@ -10,12 +10,14 @@ public class Star {
 	
 	private String name, sType;
 	private double ra, dec;
-	private Planet Planet[] = new Planet[MAX_PLANETS];
+	private Planet[] planets = new Planet[MAX_PLANETS];
 	
+	/*
 	// returns number of stars currently in the database
 	public static int numberOfStars() {
 		return numberOfStars;
 	}
+	*/
 	
 	// default star constructor
 	public Star() {
@@ -41,8 +43,9 @@ public class Star {
 		this.setRa(0);
 		this.setDec(0);
 		this.setSType("");
-		planet1.deletePlanet();
-		planet2.deletePlanet();
+		for(int i = 0; i<MAX_PLANETS; i++) {
+			planets[i].deletePlanet();
+		}
 	}
 
 	// takes an integer 1 or 2 and deletes the respective planet of the star
@@ -81,6 +84,11 @@ public class Star {
 		if(planetExists(1)) numberOfPlanets += 1;
 		if(planetExists(2)) numberOfPlanets += 1;
 		return numberOfPlanets;
+	}
+	
+	//returns integer number of max planet limit per star
+	static public int getMaxPlanets() {
+		return MAX_PLANETS;
 	}
 	
 	// adds a new planet in orbit around star taking which planet (1 or 2), name, right ascension and declination
