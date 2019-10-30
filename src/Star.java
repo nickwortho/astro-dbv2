@@ -5,8 +5,9 @@
 
 public class Star {
 
-	final private int MAX_PLANETS = 2;
-	private static int numberOfStars = 0;
+	final private static int MAX_PLANETS = 2;
+	private static int totalStars = 0;
+	private int totalPlanets = 0;
 	
 	private String name, sType;
 	private double ra, dec;
@@ -29,7 +30,7 @@ public class Star {
 	
 	// star constructor taking name, right ascension, declination and spectral type as input
 	public void setStar(String name, double ra, double dec, String sType) {
-		numberOfStars += 1;
+		totalStars += 1;
 		this.setName(name);
 		this.setRa(ra);
 		this.setDec(dec);
@@ -38,7 +39,7 @@ public class Star {
 	
 	// deletes star which method is called on and any planets in orbit
 	public void deleteStar() {
-		numberOfStars -= 1;
+		totalStars -= 1;
 		this.setName("");
 		this.setRa(0);
 		this.setDec(0);
@@ -50,16 +51,15 @@ public class Star {
 
 	// takes an integer 1 or 2 and deletes the respective planet of the star
 	public void deletePlanet(int planet) {
-		if(planet == 1) planet1.deletePlanet();
-		if(planet == 2) planet1.deletePlanet();
+		planets[planet].deletePlanet();
 	}
 	
 	// prints information about a star
-	public void getStarInfo() {
-		System.out.println("Name: " +this.getName());
-		System.out.println("Right Ascension: " +this.getRa());
-		System.out.println("Declination: " +this.getDec());
-		System.out.println("Spectral Type: " +this.getSType());
+	public String getStarInfo() {
+		return("Name: " +this.getName()
+				+ "/nRight Ascension: " +this.getRa()
+				+ "/nDeclination: " +this.getDec()
+				+ "/nSpectral Type: " +this.getSType());
 	}
 	
 	//Returns true if star exists
@@ -69,21 +69,12 @@ public class Star {
 	
 	// returns true only if input planet (1 or 2) exists in orbit around star
 	public boolean planetExists(int n) {
-		if(n == 1) {
-			return (planet1.getName() != "");
-		} else if(n == 2) {
-			return (planet2.getName() != "");
-		} else {
-			return false;
-		}
+		return (planets[n].getName() != "");
 	}
 	
 	// returns integer number of planets in orbit of the star
-	public int numberOfPlanets() {
-		int numberOfPlanets = 0;
-		if(planetExists(1)) numberOfPlanets += 1;
-		if(planetExists(2)) numberOfPlanets += 1;
-		return numberOfPlanets;
+	public int totalPlanets() {
+		return totalPlanets;
 	}
 	
 	//returns integer number of max planet limit per star
@@ -91,47 +82,25 @@ public class Star {
 		return MAX_PLANETS;
 	}
 	
-	// adds a new planet in orbit around star taking which planet (1 or 2), name, right ascension and declination
+	// adds a new planet in orbit around star taking which planet , name, right ascension and declination
 	public void addPlanet(int n, String name, double ra, double dec) {
-		if(n == 1) {
-			planet1.setPlanet(name, ra, dec);
-		} else {
-			planet2.setPlanet(name, ra, dec);
-		}
-		
+		planets[n].setPlanet(name, ra, dec);
 	}
 	
 	// takes integer of planet as input and returns planet name
 	public String getPlanetName(int n) {
-		if (n == 1) {
-			return planet1.getName();
-		} else if (n == 2) {
-			return planet2.getName();
-		} else {
-			return "ERROR";
-		}
+		return planets[n].getName();
 	}
 	
 	// takes integer of planet as input and returns planet right ascension
 	public double getPlanetRa(int n) {
-		if (n == 1) {
-			return planet1.getRa();
-		} else if (n == 2) {
-			return planet2.getRa();
-		} else {
-			return -1;
-		}
+		return planets[n].getRa();
 	}
 	
 	// takes integer of planet as input and returns planet declination
 	public double getPlanetDec(int n) {
-		if (n == 1) {
-			return planet1.getDec();
-		} else if (n == 2) {
-			return planet2.getDec();
-		} else {
-			return -1;
-		}
+		return planets[n].getDec();
+		
 	}
 	
 	public String getName() {

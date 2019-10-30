@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Interface {
 	
-	final private int MAX_STARS = 2;
+	final private static int MAX_STARS = 2;
 	private Star[] stars = new Star[MAX_STARS];
 	private int totalStars = 0;
 	
@@ -239,7 +239,7 @@ public class Interface {
 					
 					
 				case 4: // Delete a planet
-					int nameInt = 0; //stores planet selection in integer form (1-4) for star 1 and 2 respectively
+					nameInt = 0; //stores planet selection in integer form (1-4) for star 1 and 2 respectively
 					
 					System.out.println("\nDeleting a planet...\n");
 					
@@ -248,6 +248,16 @@ public class Interface {
 						break;
 					}
 					
+					for(int i = 0; i<totalStars; i++) {
+						if(stars[i].numberOfPlanets() != 0) {
+							for(int j = 0; j<Star.getMaxPlanets(); j++) {
+								
+								System.out.println(stars[i].getPlanetName(j));
+							}
+						}
+					}
+					
+					/*
 					int existsAPlanet = 0;
 					if(star1.numberOfPlanets() != 0) { // if star 1 has any planets in orbit
 						System.out.println("Orbitting "+star1.getName()+":"); // prints the planets in orbit around star 1
@@ -274,6 +284,7 @@ public class Interface {
 						System.out.println("No planets currently in the database");
 						break;
 					}
+					*/
 					
 					System.out.println("Which planet would you like to delete?");
 					
