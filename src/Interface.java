@@ -248,10 +248,11 @@ public class Interface {
 						break;
 					}
 					
-					for(int i = 0; i<totalStars; i++) {
-						if(stars[i].numberOfPlanets() != 0) {
-							for(int j = 0; j<Star.getMaxPlanets(); j++) {
-								
+					
+					
+					for(int i = 0; i<totalStars; i++) { // lists all existing planets
+						if(stars[i].totalPlanets() != 0) {
+							for(int j = 0; j<stars[i].totalPlanets(); j++) {
 								System.out.println(stars[i].getPlanetName(j));
 							}
 						}
@@ -866,4 +867,25 @@ public class Interface {
 		return Math.toDegrees(Math.acos(Math.cos(Math.toRadians(ra) - Math.toRadians(ra2))*Math.cos(Math.toRadians(dec))*Math.cos(Math.toRadians(dec2))+(Math.sin(Math.toRadians(dec))*Math.sin(Math.toRadians(dec2)))));
 	}
 	
+	public void inputStarName() {
+		int loop;
+		Scanner console = new Scanner(System.in);
+		do {
+			loop = 0;
+			System.out.println("Star name: ");
+			String name = console.nextLine(); // stores user input of star name
+			if (name.isEmpty()) {
+				System.out.println("Star name must not be blank!"); // error check, if user enters a blank name
+				loop = 1; // prompts user again for star name
+				continue;
+			}
+			for(int i = 0; i<totalStars; i++) {
+				if(name.equalsIgnoreCase(stars[i].getName())) {
+					System.out.println("This star already exists in the database! Please enter a different name"); // if there exists a star name, checks if it is the same as user input	
+					loop = 1; // prompts user again for star name
+				}
+			}
+		} while (loop == 1);
+		console.close();
+	}
 }
