@@ -22,7 +22,7 @@ public class Interface {
 		do {
 			
 			String name, sType, orbitedStar; // variables holding user input for use in actions
-			double ra = 0, dec = 0;
+			//double ra = 0, dec = 0;
 			int loop; // variable used to determine running of various while loops
 			double angDistance;
 			
@@ -47,57 +47,18 @@ public class Interface {
 							+ "	and spectral type is a combination of a letter (OBAFGKM) followed by a number (0-9)");
 					
 					// prompts user for star's name
-					do {
-						loop = 0;
-						System.out.println("Star name: ");
-						name = console.nextLine(); // stores user input of star name
-						if (name.isEmpty()) {
-							System.out.println("Star name must not be blank!"); // error check, if user enters a blank name
-							loop = 1; // prompts user again for star name
-							continue;
-						}
-						for(int i = 0; i<totalStars; i++) {
-							if(name.equalsIgnoreCase(stars[i].getName())) {
-								System.out.println("This star already exists in the database! Please enter a different name"); // if there exists a star name, checks if it is the same as user input	
-								loop = 1; // prompts user again for star name
-							}
-						}
-					} while (loop == 1);
+					inputStarName();
 					
 					// prompts user for star's right ascension
-					do { 
-						System.out.println("Right Ascension: ");
-						ra = console.nextDouble(); // stores user input of star right ascension
-						console.nextLine();
-						if (Interface.raOutsideRange(ra)) 
-							System.out.println("Error. Value must be between 0 and 360"); // error for invalid right ascension
-					} while (Interface.raOutsideRange(ra)); // prompts user again for right ascension if not within valid range
+					inputStarRa();
 					
 					// prompts user for star's declination
-					do {
-						System.out.println("Declination:");
-						dec = console.nextDouble(); // stores user input of star declination
-						console.nextLine();
-						if (Interface.decOutsideRange(dec)) 
-							System.out.println("Error. Value must be between -90 and 90"); // error for invalid right ascension
-					} while (Interface.decOutsideRange(dec)); // prompts user again for declination if not within valid range
+					inputStarDec();
 					
 					// prompts user for star's spectral type
-					do {
-						System.out.println("Spectral Type:");
-						sType = console.nextLine(); // stores user input of star spectral type
-						sType = sType.toUpperCase();
-						if (!(sType.matches("[OBAFGKM][0-9]"))) 
-							System.out.println("Error. Spectral type must be a letter (OBAFGKM) followed by a whole number (0-9)"); // error for invalid spectral type
-					} while (!(sType.matches("[OBAFGKM][0-9]")));// prompts user again for spectral type if not valid
+					inputStarSType();
 					
-					for(int i = 0; i<totalStars; i++) { 
-						if(!(stars[i].starExists())) { //creates a star in first empty array element
-							stars[i].setStar(name, ra, dec, sType); //instantiates star
-							System.out.println("/nStar added!");
-							stars[i].getStarInfo(); //displays added star back to user
-						}
-					}
+					createStar();
 					
 					break;
 					
@@ -180,18 +141,18 @@ public class Interface {
 						System.out.println("Right Ascension: ");
 						ra = console.nextDouble(); // stores user input of star right ascension
 						console.nextLine();
-						if (Interface.raOutsideRange(ra)) 
+						if (raOutsideRange(ra)) 
 							System.out.println("Error. Value must be between 0 and 360"); // error for invalid right ascension
-					} while (Interface.raOutsideRange(ra)); // prompts user again for right ascension if not within valid range
+					} while (raOutsideRange(ra)); // prompts user again for right ascension if not within valid range
 					
 					// prompts user for planet's declination
 					do {
 						System.out.println("Declination:");
 						dec = console.nextDouble(); // stores user input of star declination
 						console.nextLine();
-						if (Interface.decOutsideRange(dec)) 
+						if (decOutsideRange(dec)) 
 							System.out.println("Error. Value must be between -90 and 90"); // error for invalid right ascension
-					} while (Interface.decOutsideRange(dec)); // prompts user again for declination if not within valid range
+					} while (decOutsideRange(dec)); // prompts user again for declination if not within valid range
 					
 					
 					// adding the planet
@@ -867,25 +828,79 @@ public class Interface {
 		return Math.toDegrees(Math.acos(Math.cos(Math.toRadians(ra) - Math.toRadians(ra2))*Math.cos(Math.toRadians(dec))*Math.cos(Math.toRadians(dec2))+(Math.sin(Math.toRadians(dec))*Math.sin(Math.toRadians(dec2)))));
 	}
 	
-	public void inputStarName() {
+	public String inputStarName() {
 		int loop;
+		String name = "";
 		Scanner console = new Scanner(System.in);
 		do {
-			loop = 0;
 			System.out.println("Star name: ");
-			String name = console.nextLine(); // stores user input of star name
+			name = console.nextLine(); // stores user input of star name
 			if (name.isEmpty()) {
 				System.out.println("Star name must not be blank!"); // error check, if user enters a blank name
-				loop = 1; // prompts user again for star name
 				continue;
 			}
 			for(int i = 0; i<totalStars; i++) {
 				if(name.equalsIgnoreCase(stars[i].getName())) {
 					System.out.println("This star already exists in the database! Please enter a different name"); // if there exists a star name, checks if it is the same as user input	
-					loop = 1; // prompts user again for star name
 				}
 			}
-		} while (loop == 1);
+		} while (name == "");
 		console.close();
+		return name;
 	}
+	
+	public double inputStarRa() {
+		double ra;
+		Scanner console = new Scanner(System.in);
+		do { 
+			System.out.println("Right Ascension: ");
+			ra = console.nextDouble(); // stores user input of star right ascension
+			console.nextLine();
+			if (raOutsideRange(ra)) 
+				System.out.println("Error. Value must be between 0 and 360"); // error for invalid right ascension
+		} while (raOutsideRange(ra)); // prompts user again for right ascension if not within valid range
+		console.close();
+		return ra;
+	}
+	
+	public double inputStarDec() {
+		double dec;
+		Scanner console = new Scanner(System.in);
+		do {
+			System.out.println("Declination:");
+			dec = console.nextDouble(); // stores user input of star declination
+			console.nextLine();
+			if (decOutsideRange(dec)) 
+				System.out.println("Error. Value must be between -90 and 90"); // error for invalid right ascension
+		} while (decOutsideRange(dec)); // prompts user again for declination if not within valid range
+		console.close();
+		return dec;
+	}
+	
+	public String inputStarSType() {
+		String sType;
+		Scanner console = new Scanner(System.in);
+		do {
+			System.out.println("Spectral Type:");
+			sType = console.nextLine(); // stores user input of star spectral type
+			sType = sType.toUpperCase();
+			if (!(sType.matches("[OBAFGKM][0-9]"))) 
+				System.out.println("Error. Spectral type must be a letter (OBAFGKM) followed by a whole number (0-9)"); // error for invalid spectral type
+		} while (!(sType.matches("[OBAFGKM][0-9]")));// prompts user again for spectral type if not valid
+		console.close();
+		return sType;
+	}
+	
+	public void createStar(String name, double ra, double dec, String sType) {
+		Scanner console = new Scanner(System.in);
+		for(int i = 0; i<totalStars; i++) { 
+			if(!(stars[i].starExists())) { //creates a star in first empty array element
+				stars[i].setStar(name, ra, dec, sType); //instantiates star
+				System.out.println("/nStar added!");
+				System.out.println(stars[i].getStarInfo()); //displays added star back to user
+			}
+		}
+	}
+	
+	
 }
