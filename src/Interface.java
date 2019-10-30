@@ -22,7 +22,7 @@ public class Interface {
 		do {
 			
 			String name, sType, orbitedStar; // variables holding user input for use in actions
-			//double ra = 0, dec = 0;
+			double ra = 0, dec = 0;
 			int loop; // variable used to determine running of various while loops
 			double angDistance;
 			
@@ -35,11 +35,8 @@ public class Interface {
 			switch(action) {
 				case 1: // Add a star
 					
-					// returns an error if max stars already exist in database
-					if (totalStars == MAX_STARS) {
-						System.out.println("The database is full of stars! Please delete one and try again."); 
-						break;
-					}
+					// returns an error and exits to manu if max stars already exist in database
+					if(atMaxStars()) break;
 					
 					System.out.println("\nAdding a star...\n");
 					System.out.println("When adding a star, note that right ascension ranges from 0 to 360,"
@@ -47,121 +44,40 @@ public class Interface {
 							+ "	and spectral type is a combination of a letter (OBAFGKM) followed by a number (0-9)");
 					
 					// prompts user for star's name
-					inputStarName();
-					
+					name = inputStarName();
 					// prompts user for star's right ascension
-					inputStarRa();
-					
+					ra = inputStarRa();
 					// prompts user for star's declination
-					inputStarDec();
-					
+					dec = inputStarDec();
 					// prompts user for star's spectral type
-					inputStarSType();
+					sType = inputStarSType();
 					
-					createStar();
+					// creates star using user input
+					createStar(name, ra, dec, sType);
 					
 					break;
 					
 				case 2: // Add a planet 
 					
-					// returns error if no stars in the database to add a planet to
-					if (totalStars == 0) {
-						System.out.println("You must have at least one star in the database before adding a planet.");
-						break;
-					}
-					
-					// returns error if there is no room for a planet in the database
-					int roomForPlanet = 0;
-					while(roomForPlanet == 0) {
-						for(int i = 0; i<totalStars; i++) {
-							if(stars[i].numberOfPlanets() != Star.getMaxPlanets()) {
-								roomForPlanet = 1;
-							}
-						}
-					}
-					if(roomForPlanet == 0) {
-						System.out.println("There is no room for another planet in the database!");
-						break;
-					}
+					// returns error and exits to menu if no stars in the database to add a planet to
+					if(noStars()) break;
+					// returns error and exits to menu if there is no room for a planet in the database
+					if(!roomForPlanet()) break;
 				
 					
 					System.out.println("\nAdding a planet...\n");
 					
 					// Orbited star
-					int orbitedStarInt; //integer form of the input star given it matches a star (1, 2) loops while 0
-					do {
-						orbitedStarInt = 0;
-						
-						// prompts user for star of which the planet orbits
-						System.out.println("Which star does the planet orbit: ");
-						//prints list of current stars
-						for(int i = 0; i<totalStars; i++) {
-							if(stars[i].starExists() && stars[i].numberOfPlanets() != 2) System.out.println(stars[i].getName());
-						}
-						
-						orbitedStar = console.nextLine().toLowerCase(); // converts orbited star input to lower case
-						
-						//matches user input star to an integer value orbitedStarInt
-						for(int i = 0; i<totalStars; i++) {
-							if(orbitedStar.equals(stars[i].getName())) orbitedStarInt = (i + 1);
-						}
-						
-						if(stars[orbitedStarInt - 1].numberOfPlanets() == 2) { // returns error if orbited star entered has 2 orbiting planets
-							System.out.println("This star already has two orbitters!");
-							orbitedStarInt = 0; //reset to 0 solely to continue loop
-						}
-		
-					} while (orbitedStarInt == 0);
-					
-
+					int orbitedStarInt = inputOrbitedStar();
 					// prompts user for planet's name
-					do {
-						loop = 0;
-						System.out.println("Planet name: ");
-						name = console.nextLine().toLowerCase(); // stores user input of planet name in lower case
-						if (name.isEmpty()) {
-							System.out.println("Planet name must not be blank!"); // error check for if user enters a blank name
-							loop = 1;
-							continue;
-						}
-						
-						//checks for planets already in orbit of input star with input name
-						for(int i = 0; i<Star.getMaxPlanets(); i++) { 
-							if(name.equals(stars[orbitedStarInt - 1].getPlanetName(i))) {
-								System.out.println("This planet already exists orbiting this star in the database! Please enter a different name");
-								loop = 1;
-							}
-						}
-						
-					} while (loop == 1);
-					
-					
+					name = inputPlanetName(orbitedStarInt);
 					// prompts user for planet's right ascension
-					do { 
-						System.out.println("Right Ascension: ");
-						ra = console.nextDouble(); // stores user input of star right ascension
-						console.nextLine();
-						if (raOutsideRange(ra)) 
-							System.out.println("Error. Value must be between 0 and 360"); // error for invalid right ascension
-					} while (raOutsideRange(ra)); // prompts user again for right ascension if not within valid range
-					
+					ra = inputPlanetRa(orbitedStarInt);
 					// prompts user for planet's declination
-					do {
-						System.out.println("Declination:");
-						dec = console.nextDouble(); // stores user input of star declination
-						console.nextLine();
-						if (decOutsideRange(dec)) 
-							System.out.println("Error. Value must be between -90 and 90"); // error for invalid right ascension
-					} while (decOutsideRange(dec)); // prompts user again for declination if not within valid range
-					
+					dec = inputPlanetDec(orbitedStarInt);
 					
 					// adding the planet
-					for(int i = 0; i<Star.getMaxPlanets(); i++) { //adds planet in first vacant array position
-						if(stars[orbitedStarInt - 1].getPlanetName(i) != "") {
-							stars[orbitedStarInt - 1].addPlanet(i, name, ra, dec);
-							break;
-						}
-					}
+					stars[orbitedStarInt].createPlanet(name, ra, dec);
 					
 					break;
 					
@@ -828,23 +744,42 @@ public class Interface {
 		return Math.toDegrees(Math.acos(Math.cos(Math.toRadians(ra) - Math.toRadians(ra2))*Math.cos(Math.toRadians(dec))*Math.cos(Math.toRadians(dec2))+(Math.sin(Math.toRadians(dec))*Math.sin(Math.toRadians(dec2)))));
 	}
 	
+	// returns true if at max stars, false if there is room for at least one star
+	public boolean atMaxStars() {
+		if (totalStars == MAX_STARS) {
+			System.out.println("The database is full of stars! Please delete one and try again."); 
+		}
+		return (totalStars == MAX_STARS);
+	}
+	
+	// returns true if no stars in database, false if at least one star exists
+	public boolean noStars() {
+		if (totalStars == 0) {
+			System.out.println("You must have at least one star in the database before adding a planet.");
+		}
+		return (totalStars == 0);
+	}
+	
 	public String inputStarName() {
 		int loop;
 		String name = "";
 		Scanner console = new Scanner(System.in);
 		do {
+			loop = 0;
 			System.out.println("Star name: ");
 			name = console.nextLine(); // stores user input of star name
 			if (name.isEmpty()) {
 				System.out.println("Star name must not be blank!"); // error check, if user enters a blank name
+				loop = 1;
 				continue;
 			}
 			for(int i = 0; i<totalStars; i++) {
 				if(name.equalsIgnoreCase(stars[i].getName())) {
 					System.out.println("This star already exists in the database! Please enter a different name"); // if there exists a star name, checks if it is the same as user input	
+				loop = 1;
 				}
 			}
-		} while (name == "");
+		} while (loop == 1);
 		console.close();
 		return name;
 	}
@@ -892,7 +827,6 @@ public class Interface {
 	}
 	
 	public void createStar(String name, double ra, double dec, String sType) {
-		Scanner console = new Scanner(System.in);
 		for(int i = 0; i<totalStars; i++) { 
 			if(!(stars[i].starExists())) { //creates a star in first empty array element
 				stars[i].setStar(name, ra, dec, sType); //instantiates star
@@ -902,5 +836,113 @@ public class Interface {
 		}
 	}
 	
+	public int inputOrbitedStar() {
+		int orbitedStarInt; //integer form of the input star given it matches a star (1, 2) loops while 0
+		Scanner console = new Scanner(System.in);
+		do {
+			orbitedStarInt = 0;
+			
+			//prompts user for star of which the planet orbits
+			System.out.println("Which star does the planet orbit: ");
+			//prints list of current stars with room for a planet
+			listStarsWithRoom();
+			
+			String orbitedStar = console.nextLine().toLowerCase(); // converts orbited star input to lower case
+			
+			//matches user input star to an integer value orbitedStarInt
+			for(int i = 0; i<totalStars; i++) {
+				if(orbitedStar.equals(stars[i].getName())) orbitedStarInt = (i + 1);
+			}
+			
+			//continues loop if input star has max planets
+			if(stars[orbitedStarInt-1].atMaxPlanets()) orbitedStarInt = 0; 
+
+		} while (orbitedStarInt == 0);
+		console.close();
+		return orbitedStarInt;
+	}
 	
+	//takes user input for planet name and returns the input name
+	public String inputPlanetName(int orbitedStarInt) {
+		int loop;
+		String name = "";
+		Scanner console = new Scanner(System.in);
+		do {
+			loop = 0;
+			System.out.println("Planet name: ");
+			name = console.nextLine().toLowerCase(); // stores user input of planet name in lower case
+			if (name.isEmpty()) {
+				System.out.println("Planet name must not be blank!"); // error check for if user enters a blank name
+				loop = 1;
+				continue;
+			}
+			//checks for planets already in orbit of input star with input name
+			for(int i = 0; i<Star.getMaxPlanets(); i++) { 
+				if(name.equals(stars[orbitedStarInt - 1].getPlanetName(i))) {
+					System.out.println("This planet already exists orbiting this star in the database! Please enter a different name");
+					loop = 1;
+				}
+			}
+		} while (loop == 1);
+		console.close();
+		return name;
+	}
+	
+	public double inputPlanetRa(int orbitedStarInt) {
+		double ra;
+		Scanner console = new Scanner(System.in);
+		do { 
+			System.out.println("Right Ascension: ");
+			ra = console.nextDouble(); // stores user input of star right ascension
+			console.nextLine();
+			if (raOutsideRange(ra)) 
+				System.out.println("Error. Value must be between 0 and 360"); // error for invalid right ascension
+		} while (raOutsideRange(ra)); // prompts user again for right ascension if not within valid range
+		console.close();
+		return ra;
+	}
+	
+	public double inputPlanetDec(int orbitedStarInt) {
+		double dec;
+		Scanner console = new Scanner(System.in);
+		do {
+			System.out.println("Declination:");
+			dec = console.nextDouble(); // stores user input of star declination
+			console.nextLine();
+			if (decOutsideRange(dec)) 
+				System.out.println("Error. Value must be between -90 and 90"); // error for invalid right ascension
+		} while (decOutsideRange(dec)); // prompts user again for declination if not within valid range
+		console.close();
+		return dec;
+	}
+	
+	// returns true if there is room to add a planet, returns false and prints error all stars at max planets
+	public boolean roomForPlanet() {
+		int roomForPlanet = 0;
+		while(roomForPlanet == 0) {
+			for(int i = 0; i<totalStars; i++) {
+				if(stars[i].totalPlanets() != Star.getMaxPlanets()) {
+					roomForPlanet = 1;
+				}
+			}
+		}
+		if(roomForPlanet == 0) {
+			System.out.println("There is no room for another planet in the database!");
+		}
+		return (roomForPlanet == 1);
+	}
+	
+	// prints all stars currently in database
+	public void listStars() {
+		for(int i = 0; i<totalStars; i++) {
+			System.out.println(stars[i].getName());
+		}
+	}
+	
+	// prints all stars currently in database without max planets
+	public void listStarsWithRoom() {
+		for(int i = 0; i<totalStars; i++) {
+			if(stars[i].starExists() && (stars[i].totalPlanets() != Star.getMaxPlanets())) System.out.println(stars[i].getName());
+		}
+	}
 }

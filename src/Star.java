@@ -82,9 +82,18 @@ public class Star {
 		return MAX_PLANETS;
 	}
 	
-	// adds a new planet in orbit around star taking which planet , name, right ascension and declination
-	public void addPlanet(int n, String name, double ra, double dec) {
-		planets[n].setPlanet(name, ra, dec);
+	public boolean atMaxPlanets() {
+		return (totalPlanets == MAX_PLANETS);
+	}
+	
+	// creates a new planet in orbit around star method is called on taking planet name, right ascension and declination as input
+	public void createPlanet(String name, double ra, double dec) {
+		for(int planet = 0; planet<Star.getMaxPlanets(); planet++) { //adds planet in first vacant array position
+			if(this.getPlanetName(planet) == "") {
+				planets[planet].setPlanet(name, ra, dec);
+				break;
+			}
+		}
 	}
 	
 	// takes integer of planet as input and returns planet name
