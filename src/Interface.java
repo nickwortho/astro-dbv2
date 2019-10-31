@@ -912,6 +912,8 @@ public class Interface {
 		return dec;
 	}
 	
+	// takes name of star as a String and deletes it, prints completion message,
+	// and shifts the stars array down one index to fill gap, returns error if input star doesn't exist
 	public void deleteStar(String starName) {
 		if(inputStarNameMatches(starName) == (-1)) {
 			System.out.println("Star does not exist in database");
@@ -919,6 +921,11 @@ public class Interface {
 			stars[inputStarNameMatches(starName)].deleteStar();
 			System.out.println("Star "+starName+" deleted!");
 		}
+		// shifts each star above the deleted star down one index to fill the gap
+		for(int i = 0; i<(inputStarNameMatches(starName)-1); i++) {
+			stars[i] = stars[i+1];
+		}
+		
 	}
 	
 	// returns true if there is room to add a planet, returns false and prints error all stars at max planets

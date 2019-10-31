@@ -55,6 +55,9 @@ public class Star {
 	// takes an integer 1 or 2 and deletes the respective planet of the star
 	public void deletePlanet(int planet) {
 		planets[planet].deletePlanet();
+		for(int i = planet; i<(this.totalPlanets()-1); i++) {
+			planets[i] = planets[i+1];
+		}
 	}
 	
 	// prints information about a star
