@@ -26,6 +26,9 @@ public class Star {
 		this.setRa(0);
 		this.setDec(0);
 		this.setSType("");
+		for(int i = 0; i<MAX_PLANETS; i++) {
+			planets[i] = new Planet();
+		}
 	}
 	
 	// star constructor taking name, right ascension, declination and spectral type as input
@@ -35,9 +38,14 @@ public class Star {
 		this.setRa(ra);
 		this.setDec(dec);
 		this.setSType(sType);
-		for(int i = 0; i<MAX_PLANETS; i++) {
-			planets[i] = new Planet();
-		}
+	}
+	
+	//copies data from star a into the star on which the method is called
+	public void copyStar(Star star) {
+		this.setName(star.getName());
+		this.setRa(star.getRa());
+		this.setDec(star.getDec());
+		this.setSType(star.getSType());
 	}
 	
 	// deletes star which method is called on and any planets in orbit
@@ -47,15 +55,16 @@ public class Star {
 		this.setRa(0);
 		this.setDec(0);
 		this.setSType("");
-		for(int i = 0; i<MAX_PLANETS; i++) {
-			deletePlanet(i);
+		for(int planet = 0; planet<MAX_PLANETS; planet++) {
+			deletePlanet(planet);
 		}
 	}
 
 	// takes an integer 1 or 2 and deletes the respective planet of the star
 	public void deletePlanet(int planet) {
 		planets[planet].deletePlanet();
-		for(int i = planet; i<(this.totalPlanets()-1); i++) {
+		this.totalPlanets -= 1;
+		for(int i = planet; i<(this.totalPlanets()); i++) {
 			planets[i] = planets[i+1];
 		}
 	}

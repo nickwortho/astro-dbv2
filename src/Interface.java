@@ -848,11 +848,14 @@ public class Interface {
 			String orbitedStar  = inputStarName(2);
 			starIndex = inputStarNameMatches(orbitedStar);
 			
-			//continues loop if input star has max planets
-			if(stars[starIndex].atMaxPlanets()) {
-				System.out.println("Star has no room for more planets!");
-				starIndex = 0; // to continue loop
-			}
+			if(starIndex != (-1)) {
+				//continues loop if input star has max planets
+				if(stars[starIndex].atMaxPlanets()) {
+					System.out.println("Star has no room for more planets!");
+					starIndex = 0; // to continue loop
+				}
+			} else System.out.println("That star does not exist!");
+			
 
 		} while (starIndex == 0);
 		return starIndex;
@@ -915,16 +918,18 @@ public class Interface {
 	// takes name of star as a String and deletes it, prints completion message,
 	// and shifts the stars array down one index to fill gap, returns error if input star doesn't exist
 	public void deleteStar(String starName) {
-		if(inputStarNameMatches(starName) == (-1)) {
+		int starInt = inputStarNameMatches(starName);
+		if(starInt == (-1)) {
 			System.out.println("Star does not exist in database");
 		} else {
-			stars[inputStarNameMatches(starName)].deleteStar();
+			stars[starInt].deleteStar();
 			System.out.println("Star "+starName+" deleted!");
+			// shifts each star above the deleted star down one index to fill the gap
+			for(int i = starInt; i<(Star.totalStars()-1); i++) {
+				stars[i].copyStar(stars[i+1]);
+			}
 		}
-		// shifts each star above the deleted star down one index to fill the gap
-		for(int i = 0; i<(inputStarNameMatches(starName)-1); i++) {
-			stars[i] = stars[i+1];
-		}
+		
 		
 	}
 	
