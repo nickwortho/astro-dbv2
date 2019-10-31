@@ -35,6 +35,9 @@ public class Star {
 		this.setRa(ra);
 		this.setDec(dec);
 		this.setSType(sType);
+		for(int i = 0; i<MAX_PLANETS; i++) {
+			planets[i] = new Planet();
+		}
 	}
 	
 	// deletes star which method is called on and any planets in orbit
@@ -45,7 +48,7 @@ public class Star {
 		this.setDec(0);
 		this.setSType("");
 		for(int i = 0; i<MAX_PLANETS; i++) {
-			planets[i].deletePlanet();
+			deletePlanet(i);
 		}
 	}
 
@@ -57,9 +60,13 @@ public class Star {
 	// prints information about a star
 	public String getStarInfo() {
 		return("Name: " +this.getName()
-				+ "/nRight Ascension: " +this.getRa()
-				+ "/nDeclination: " +this.getDec()
-				+ "/nSpectral Type: " +this.getSType());
+				+ "\nRight Ascension: " +this.getRa()
+				+ "\nDeclination: " +this.getDec()
+				+ "\nSpectral Type: " +this.getSType());
+	}
+	
+	public static int totalStars() {
+		return totalStars;
 	}
 	
 	//Returns true if star exists
@@ -82,6 +89,7 @@ public class Star {
 		return MAX_PLANETS;
 	}
 	
+	//returns true if star is at max planet limit, false if room for at least 1 planet
 	public boolean atMaxPlanets() {
 		return (totalPlanets == MAX_PLANETS);
 	}
