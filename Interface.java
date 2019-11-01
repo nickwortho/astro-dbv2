@@ -213,22 +213,33 @@ public class Interface {
 				case 9: // import star/planet info from file
 					
 					System.out.println("Are you sure? Importing data will erase all currently held objects in database!");
-					System.out.println("Yes: (0)  No: (1)");
+					System.out.println("(0): Yes  (1): No");
 					int confirm = console.nextInt();
+					console.nextLine();
 					if(confirm == 1) break;
 					
 					clearDatabase(); // clears database so new data can be written from file
 					
-					openFile();
+					System.out.println("Please enter the input file name");
+					String fileName = console.nextLine();
+					
+					openFileForReading(fileName);
 					readFile();
-					closeFile();
+					closeFileForReading();
 					
 					break;
 					
 				case 10: // export star/planet info to file
 					
+					System.out.println("\nExporting database contents to file..\n");
+					System.out.println("Please enter the output file name (WARNING WILL BE OVERWRITTEN)");
+					fileName = console.nextLine();
 					
+					openFileForWriting(fileName);
+					writeFile();
+					closeFileForWriting();
 					
+					break;
 					
 				default: // Quit program (or no valid option chosen)
 					System.out.print("Are you sure you want to quit? This will erase all database entries.");
@@ -747,12 +758,26 @@ public class Interface {
 		return getAngularDistance(raA, raB, decA, decB);
 	}
 	
-	public void openFile() {
+	public void openFileForReading(String fileName) {
+		inputFile = new File(fileName);
+		
 		try {
-			input = new Scanner(new File("input.txt"));
-		} 
+			if(!inputFile.exists()) inputFile.createNewFile();
+			input = new Scanner(inputFile);
+		}
 		catch(Exception e) {
-			System.out.println("File could not be found.");
+			System.out.println("Error has occurred opening file.");
+		}
+	}
+	
+	public void openFileForWriting(String fileName) {
+		outputFile = new File(fileName);
+		try {
+			if(!outputFile.exists()) outputFile.createNewFile();
+			output = new PrintWriter(outputFile);
+		}
+		catch(Exception e) {
+			System.out.println("Error has occurred opening file.");
 		}
 	}
 	
@@ -789,20 +814,51 @@ public class Interface {
 		if(objectType.equals("star")) {
 			sType = data[4].toUpperCase();
 			createStar(name, ra, dec, sType);
-			System.out.println("Star " +name+ " imported!");
+			System.out.println("STAR " +name+ " imported!");
 		} else if(objectType.equals("planet")) {
 			orbitedStar = data[4];
 			orbitedStarInt = inputStarNameMatches(orbitedStar);
 			stars[orbitedStarInt].createPlanet(name, ra, dec);
-			System.out.println("Planet " +name+ " imported!");
+			System.out.println("PLANET " +name+ " imported!");
 		}
 	}
 	
 	public void writeFile() {
+		String[] data = new String[5];
 		
+		for(int i = 0; i<Star.totalStars(); i++) {
+			
+			data[0] = ("STAR");
+			data[1] = stars[i].getName();
+			data[2] = Double.toString(stars[i].getRa());			
+			data[3] = Double.toString(stars[i].getDec());
+			data[4] = stars[i].getSType();
+
+			enterDataIntoFile(data);
+			
+			for(int j = 0; j<stars[i].totalPlanets(); j++) {
+				
+				data[0] = ("PLANET");
+				data[1] = stars[i].getPlanetName(j);
+				data[2] = Double.toString(stars[i].getPlanetRa(j));			
+				data[3] = Double.toString(stars[i].getPlanetDec(j));
+				data[4] = stars[i].getName();
+				
+				enterDataIntoFile(data);
+				
+			}
+		}
 	}
 	
-	public void closeFile() {
+	public void enterDataIntoFile(String[] data) {
+		output.println(data[0]+" "+data[1]+" "+data[2]+" "+data[3]+" "+data[4]);
+		System.out.println(data[0]+ " " +data[1]+ " exported!");
+	}
+	
+	public void closeFileForReading() {
 		input.close();
+	}
+	public void closeFileForWriting() {
+		output.close();
 	}
 }
