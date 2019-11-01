@@ -127,6 +127,8 @@ public class Interface {
 				case 5: //display list
 					
 					if(noStars()) break;
+					System.out.println("\nDisplaying all objects in database...\n");
+
 					
 					listStars();
 					for(int i = 0; i<Star.totalStars(); i++) {
@@ -135,127 +137,20 @@ public class Interface {
 					
 					break;
 					
-					/*
-				case 4: // Delete a planet
-					nameInt = 0; //stores planet selection in integer form (1-4) for star 1 and 2 respectively
+				case 6: //display planets orbiting a star
 					
-					System.out.println("\nDeleting a planet...\n");
+					if(noStars()) break;
+					System.out.println("\nDisplaying planets orbitting a star...\n");
 					
-					if(totalStars == 0) { // returns error if no planets exist in the database
-						System.out.println("No planets currently in the database!");
-						break;
-					}
+					listStars();
 					
+					name = inputStarName(2);
+					int starInt = inputStarNameMatches(name);
 					
-					
-					for(int i = 0; i<totalStars; i++) { // lists all existing planets
-						if(stars[i].totalPlanets() != 0) {
-							for(int j = 0; j<stars[i].totalPlanets(); j++) {
-								System.out.println(stars[i].getPlanetName(j));
-							}
-						}
-					}
-					*/
-					/*
-					int existsAPlanet = 0;
-					if(star1.numberOfPlanets() != 0) { // if star 1 has any planets in orbit
-						System.out.println("Orbitting "+star1.getName()+":"); // prints the planets in orbit around star 1
-						if(star1.getPlanetName(1) != "") {
-							System.out.println(star1.getPlanetName(1));
-						}
-						if(star1.getPlanetName(2) != "") {
-							System.out.println(star1.getPlanetName(2));
-						}
-						existsAPlanet = 1;
-					}
-					if(star2.numberOfPlanets() != 0) { // if star 2 has any planets in orbit
-						System.out.println("Orbitting "+star2.getName()+":"); // prints the planets in orbit around star 1
-						if(star2.getPlanetName(1) != "") {
-							System.out.println(star2.getPlanetName(1));
-						}
-						if(star2.getPlanetName(2) != "") {
-							System.out.println(star2.getPlanetName(2));
-						}
-						existsAPlanet = 1;
-					}
-					
-					if(existsAPlanet == 0) { // returns error if no planets exist in the database
-						System.out.println("No planets currently in the database");
-						break;
-					}
-					*/
-					/*
-					System.out.println("Which planet would you like to delete?");
-					
-					do {
-						name = console.nextLine().toLowerCase();
-						
-						// assigns chosen planet to a respective integer for easier use
-						if(name.equals(star1.getPlanetName(1))) nameInt = 1;
-						if(name.equals(star1.getPlanetName(2))) nameInt = 2;
-						if(name.equals(star2.getPlanetName(1))) nameInt = 3;
-						if(name.equals(star2.getPlanetName(2))) nameInt = 4;
-						
-						if(nameInt == 0) { // returns error and loops if name input was not an existing star name
-							System.out.println("That planet does not exist in the database! Try again?");
-							
-						}
-					} while(nameInt == 0);
-
-					switch(nameInt) { // deletes selected planet
-						case 1: 
-							System.out.println("Planet "+star1.getPlanetName(1)+" has been deleted!");
-							star1.deletePlanet(1);
-							break;
-						case 2: 
-							System.out.println("Planet "+star1.getPlanetName(2)+" has been deleted!");
-							star1.deletePlanet(2);
-							break;
-						case 3: 
-							System.out.println("Planet "+star2.getPlanetName(1)+" has been deleted!");
-							star2.deletePlanet(1);
-							break;
-						case 4: 
-							System.out.println("Planet "+star2.getPlanetName(2)+" has been deleted!");
-							star2.deletePlanet(2);
-							break;
-						default:
-							break;
-					}
+					listPlanets(starInt);
 					
 					break;
-					
-				case 5: // Display list of all objects
-					
-					
-					if(totalStars == 0) { // returns error if no objects exist in the database
-						System.out.println("No astronomical objects exist in database!");
-						break;
-					}
-					
-					System.out.println("\nDisplaying all objects in database...\n");
-					
-					// if star 1 exists, prints its information and that of any planets in orbit
-					if(star1.starExists()) {
-						System.out.println("Star <"+star1.getName()+">: coordinate <"+star1.getRa()+"> <"
-								+star1.getDec()+">, spectral type <"+star1.getSType()+">");
-						for(int i = 1; i <=2; i++) { // loops through planets and if they exist, prints their information
-							if(star1.planetExists(i)) System.out.println("Planet <"+star1.getPlanetName(i)+">: coordinate <"+star1.getPlanetRa(i)+"> <"
-									+star1.getPlanetDec(i)+">");
-						}
-					}
-					
-					// if star 2 exists, prints its information and that of any planets in orbit
-					if(star2.starExists()) {
-						System.out.println("Star <"+star2.getName()+">: coordinate <"+star2.getRa()+"> <"
-								+star2.getDec()+">, spectral type <"+star2.getSType()+">");
-						for(int i = 1; i <=2; i++) { // loops through planets and if they exist, prints their information
-							if(star2.planetExists(i)) System.out.println("Planet <"+star2.getPlanetName(i)+">: coordinate <"+star2.getPlanetRa(i)+"> <"
-									+star2.getPlanetDec(i)+">");
-						}
-					}
-					
-					break;
+					/*
 					
 				case 6: // Display list of planets orbiting a star
 
