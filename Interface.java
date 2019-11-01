@@ -65,6 +65,7 @@ public class Interface {
 					
 					// creates star using user input
 					createStar(name, ra, dec, sType);
+					System.out.println(stars[inputStarNameMatches(name)].getStarInfo()); //displays added star back to user
 					
 					break;
 					
@@ -210,26 +211,17 @@ public class Interface {
 					break;
 					
 				case 9: // import star/planet info from file
-					String[] data = new String[5];
-					String objectType;
+					
+					System.out.println("Are you sure? Importing data will erase all currently held objects in database!");
+					System.out.println("Yes: (0)  No: (1)");
+					int confirm = console.nextInt();
+					if(confirm == 1) break;
+					
+					clearDatabase(); // clears database so new data can be written from file
 					
 					openFile();
-					data = readFile();
-					
-					objectType = data[0];
-					name = data[1];
-					ra = Double.parseDouble(data[2]);
-					dec = Double.parseDouble(data[3]);
-					if(objectType.equals("STAR")) {
-						sType = data[4];
-						createStar(name, ra, dec, sType);
-						System.out.println("Star " +name+ " imported!");
-					} else if(objectType.equals("PLANET")) {
-						orbitedStar = data[4];
-						orbitedStarInt = inputStarNameMatches(orbitedStar);
-						stars[orbitedStarInt].createPlanet(name, ra, dec);
-						System.out.println("Planet " +name+ " imported!");
-					}
+					readFile();
+					closeFile();
 					
 					break;
 					
@@ -317,6 +309,12 @@ public class Interface {
 		double dec2Rad = Math.toRadians(dec2);
 		
 		return Math.toDegrees(Math.acos(Math.cos(raRad - ra2Rad)*Math.cos(decRad)*Math.cos(dec2Rad)+(Math.sin(decRad)*Math.sin(dec2Rad))));
+	}
+	
+	public void clearDatabase() {
+		for(int i = 0; i<Star.totalStars(); i++) {
+			stars[i].deleteStar();
+		}
 	}
 	
 	// returns true if at max stars, false if there is room for at least one star
@@ -494,8 +492,6 @@ public class Interface {
 		for(int i = 0; i<MAX_STARS; i++) { 
 			if(!(stars[i].starExists())) { //creates a star in first empty array element
 				stars[i].setStar(name, ra, dec, sType); //instantiates star
-				System.out.println("\nStar added!");
-				System.out.println(stars[i].getStarInfo()); //displays added star back to user
 				break;
 			}
 		}
@@ -760,22 +756,46 @@ public class Interface {
 		}
 	}
 	
-	public String[] readFile() {
+	public void readFile() {
 		String[] data = new String[5];
 		while(input.hasNext()) {
 			
-			data[0] = input.next(); // object type, star or planet
-			data[1] = input.next(); // object name
-			data[2] = input.next(); // object right ascension
-			data[3] = input.next(); // object declination
-			if(data[0].equals("STAR")) { // if object type = star, read sType, if planet, read orbitedStar
+			data[0] = input.next().toLowerCase(); // object type, star or planet
+			data[1] = input.next().toLowerCase(); // object name
+			data[2] = input.next().toLowerCase(); // object right ascension
+			data[3] = input.next().toLowerCase(); // object declination
+			if(data[0].equals("star")) { // if object type = star, read sType, if planet, read orbitedStar
 				data[4] = input.next(); // sType if object was a star
-			} else if(data[0].equals("PLANET")) {
-				data[4] = input.next(); // orbitedStar if object was a planet
+			} else if(data[0].equals("planet")) {
+				data[4] = input.next().toLowerCase(); // orbitedStar if object was a planet
 			}
 			
+			enterDataFromFile(data);
 		}
-		return data;
+		
+	}
+	
+	public void enterDataFromFile(String[] data) {
+		String objectType, orbitedStar, name, sType;
+		int orbitedStarInt;
+		double ra, dec;
+		
+		
+		objectType = data[0];
+		name = data[1];
+		ra = Double.parseDouble(data[2]);
+		dec = Double.parseDouble(data[3]);
+		
+		if(objectType.equals("star")) {
+			sType = data[4].toUpperCase();
+			createStar(name, ra, dec, sType);
+			System.out.println("Star " +name+ " imported!");
+		} else if(objectType.equals("planet")) {
+			orbitedStar = data[4];
+			orbitedStarInt = inputStarNameMatches(orbitedStar);
+			stars[orbitedStarInt].createPlanet(name, ra, dec);
+			System.out.println("Planet " +name+ " imported!");
+		}
 	}
 	
 	public void writeFile() {
