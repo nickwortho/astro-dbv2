@@ -30,6 +30,13 @@ public class Planet {
 		this.setDec(0);
 	}
 	
+	//copies data from planet a into the planet on which the method is called
+	public void copyPlanet(Planet planet) {
+		this.setName(planet.getName());
+		this.setRa(planet.getRa());
+		this.setDec(planet.getDec());
+	}
+	
 	public String getName() {
 		return name;
 	}

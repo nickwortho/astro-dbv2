@@ -69,7 +69,8 @@ public class Star {
 		planets[planet].deletePlanet();
 		this.totalPlanets -= 1;
 		for(int i = planet; i<(this.totalPlanets()); i++) {
-			planets[i] = planets[i+1];
+			planets[i].copyPlanet(planets[i+1]);
+			planets[i+1].deletePlanet();
 		}
 	}
 	
@@ -93,6 +94,13 @@ public class Star {
 	// returns true only if input planet (1 or 2) exists in orbit around star
 	public boolean planetExists(int n) {
 		return (planets[n].getName() != "");
+	}
+	
+	public boolean planetNameExists(String name) {
+		for(int i = 0; i<totalPlanets; i++) {
+			if(planets[i].getName().equals(name)) return true;
+		}
+		return false;
 	}
 	
 	// returns integer number of planets in orbit of the star
@@ -119,6 +127,14 @@ public class Star {
 				break;
 			}
 		}
+	}
+	
+	// returns index of planet if it exists in orbit around star, returns -1 if name not found
+	public int inputPlanetNameMatches(String name, int planetIndex) {
+		if(name.equals(planets[planetIndex].getName())) {
+			return planetIndex;
+		}
+		return (-1);
 	}
 	
 	// takes integer of planet as input and returns planet name

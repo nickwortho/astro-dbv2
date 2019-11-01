@@ -72,14 +72,16 @@ public class Interface {
 					System.out.println("\nAdding a planet...\n");
 					
 					// Orbited star
+					
 					int orbitedStarInt = inputOrbitedStar();
 					if (stars[orbitedStarInt].atMaxPlanets()) break;
 					// prompts user for planet's name
-					name = inputPlanetName(orbitedStarInt);
+					name = inputPlanetName(1, orbitedStarInt);
+					if(stars[orbitedStarInt].planetNameExists(name)) break;
 					// prompts user for planet's right ascension
-					ra = inputPlanetRa(orbitedStarInt);
+					ra = inputPlanetRa();
 					// prompts user for planet's declination
-					dec = inputPlanetDec(orbitedStarInt);
+					dec = inputPlanetDec();
 					
 					// adding the planet
 					stars[orbitedStarInt].createPlanet(name, ra, dec);
@@ -101,8 +103,27 @@ public class Interface {
 						
 					break;
 					
-				case 4:
+				case 4: //delete planet
+					
+					if(noStars()) break;
+					if(noPlanets()) break;
+					
+					System.out.println("\nDeleting a planet...\n");
+					
+					listStars();
+					
+					System.out.println("Please enter star around which planet orbits:");
+					orbitedStar = inputStarName(2);
+					orbitedStarInt = inputStarNameMatches(orbitedStar);
+					
+					listPlanets(orbitedStarInt);
+					
+					name = inputPlanetName(2, orbitedStarInt);
+					
+					deletePlanet(orbitedStarInt, name);
+					
 					break;
+					
 				case 5: //display list
 					
 					if(noStars()) break;
@@ -757,9 +778,17 @@ public class Interface {
 	// returns true if no stars in database, false if at least one star exists
 	public boolean noStars() {
 		if (Star.totalStars() == 0) {
-			System.out.println("No stars in the database! Please add one first.");
+			System.out.println("No astronomical objects in the database! Please add one first.");
 		}
 		return (Star.totalStars() == 0);
+	}
+	
+	//returns true if no planets are found orbiting any star, false if at least one found
+	public boolean noPlanets() {
+		for(int i = 0; i<Star.totalStars(); i++) {
+			if(stars[i].totalPlanets() != 0) return false; 
+		}
+		return true;
 	}
 	
 	// takes and returns users input star name, option 1 (adding star) will print error and loop prompt if 
@@ -793,13 +822,24 @@ public class Interface {
 	// takes a String star name and returns the index of star in array with matching name, 
 	// returns -1 if star name not found
 	public int inputStarNameMatches(String name) {
-		int starIndex;
-		for(starIndex = 0; starIndex<Star.totalStars(); starIndex++) {
+		for(int starIndex = 0; starIndex<Star.totalStars(); starIndex++) {
 			if(name.equals(stars[starIndex].getName()))
 				return starIndex;
 		}
 		return (-1);
 	}
+	
+	// takes a String planet name and int star array index and returns the index of planet in array with matching name, 
+	// returns -1 if star name not found
+	public int inputPlanetNameMatches(String name, int star) {
+		int nameInt;
+		for(int planetIndex = 0; planetIndex<stars[star].totalPlanets(); planetIndex++) {
+			nameInt = stars[star].inputPlanetNameMatches(name, planetIndex);
+			if(nameInt != (-1)) return nameInt;
+		}
+		return (-1);
+	}
+		
 	
 	public double inputStarRa() {
 		double ra;
@@ -866,7 +906,7 @@ public class Interface {
 				//continues loop if input star has max planets
 				if(stars[starIndex].atMaxPlanets()) {
 					System.out.println("Star has no room for more planets!");
-					starIndex = 0; // to continue loop
+					starIndex = (-1); // to continue loop
 				}
 			} else System.out.println("That star does not exist!");
 			
@@ -875,31 +915,36 @@ public class Interface {
 		return starIndex;
 	}
 	
-	//takes user input for planet name and returns the input name
-	public String inputPlanetName(int orbitedStarInt) {
-		int loop;
-		String name = "";
-		do {
-			loop = 0;
-			System.out.println("Planet name: ");
-			name = console.nextLine().toLowerCase(); // stores user input of planet name in lower case
-			if (name.isEmpty()) {
-				System.out.println("Planet name must not be blank!"); // error check for if user enters a blank name
-				loop = 1;
-				continue;
-			}
-			//checks for planets already in orbit of input star with input name
-			for(int i = 0; i<Star.getMaxPlanets(); i++) { 
-				if(name.equals(stars[orbitedStarInt].getPlanetName(i))) {
-					System.out.println("This planet already exists orbiting this star in the database! Please enter a different name");
-					loop = 1;
-				}
-			}
-		} while (loop == 1);
-		return name;
-	}
 	
-	public double inputPlanetRa(int orbitedStarInt) {
+	// takes and returns users input planet name, option 1 (adding star) will print error and loop prompt if 
+		// the planet already in orbit around star, option 2 (deleting star) will quit loop if planet name exists
+		public String inputPlanetName(int option, int orbitedStarInt) {
+			int loop;
+			String name = "";
+			do {
+				loop = 0;
+				System.out.println("Planet name: ");
+				name = console.nextLine().toLowerCase(); // stores user input of star name
+				if (name.isEmpty()) {
+					System.out.println("Planet name must not be blank!"); // error check, if user enters a blank name
+					loop = 1;
+					continue;
+				}
+				
+				if(stars[orbitedStarInt].inputPlanetNameMatches(name, orbitedStarInt) != (-1)) {
+					if (option == 2) { // if deleting star, or adding planet, matching name will stop loops
+						loop = 0;
+					} else if (option == 1) { // if adding star, matching name will loop and print error
+						System.out.println("This planet already exists in orbit of this star! Please enter a different name"); // if there exists a star name, checks if it is the same as user input	
+						loop = 1;
+					}
+				}	
+					
+			} while (loop == 1);
+			return name;
+		}
+	
+	public double inputPlanetRa() {
 		double ra;
 		do { 
 			System.out.println("Right Ascension: ");
@@ -911,7 +956,7 @@ public class Interface {
 		return ra;
 	}
 	
-	public double inputPlanetDec(int orbitedStarInt) {
+	public double inputPlanetDec() {
 		double dec;
 		do {
 			System.out.println("Declination:");
@@ -940,8 +985,13 @@ public class Interface {
 			}
 			
 		}
-		
-		
+	}
+	
+	// takes a planets name and index of orbited star and deletes planet
+	public void deletePlanet(int orbitedStarInt, String planetName) {
+		int planetInt = inputPlanetNameMatches(planetName, orbitedStarInt); // finds array index of input planet name
+		stars[orbitedStarInt].deletePlanet(planetInt); // deletes planet at said array index
+		System.out.println("Planet " +planetName+ " deleted!");
 	}
 	
 	// returns true if there is room to add a planet, returns false and prints error all stars at max planets
