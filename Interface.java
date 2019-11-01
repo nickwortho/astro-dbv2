@@ -19,8 +19,7 @@ public class Interface {
 		
 		int end = 1; // variable for user to quit program, will not loop menu if 0
 		int skipQuit = 0; // if 1, skips default quit sequence
-		// fills array with blank star objects
-		for(int i = 0; i<MAX_STARS; i++) {
+		for(int i = 0; i<MAX_STARS; i++) { // fills array with blank star objects
 			stars[i] = new Star();
 		}
 			
@@ -925,9 +924,12 @@ public class Interface {
 			stars[starInt].deleteStar();
 			System.out.println("Star "+starName+" deleted!");
 			// shifts each star above the deleted star down one index to fill the gap
-			for(int i = starInt; i<(Star.totalStars()-1); i++) {
+			for(int i = starInt; i<(Star.totalStars()); i++) {
 				stars[i].copyStar(stars[i+1]);
+				stars[i+1].deleteStar(); // deletes the original element that was copied into stars[i], will totalStars -= 1
+				Star.changeTotalStars(1); // adds 1 to totalStars to reverse the 1 removed when deleting the original element after copying
 			}
+			
 		}
 		
 		

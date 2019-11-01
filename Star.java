@@ -48,6 +48,10 @@ public class Star {
 		this.setSType(star.getSType());
 	}
 	
+	public static void changeTotalStars(int delta) {
+		totalStars += (delta);
+	}
+	
 	// deletes star which method is called on and any planets in orbit
 	public void deleteStar() {
 		totalStars -= 1;
@@ -55,7 +59,7 @@ public class Star {
 		this.setRa(0);
 		this.setDec(0);
 		this.setSType("");
-		for(int planet = 0; planet<MAX_PLANETS; planet++) {
+		for(int planet = 0; planet<this.totalPlanets; planet++) {
 			deletePlanet(planet);
 		}
 	}
