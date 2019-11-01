@@ -86,6 +86,8 @@ public class Interface {
 					// adding the planet
 					stars[orbitedStarInt].createPlanet(name, ra, dec);
 					
+					System.out.println("Planet added!");
+					
 					break;
 					
 					
@@ -199,267 +201,6 @@ public class Interface {
 					listObjectsWithinDistance(objectA, range);
 					
 					break;
-					
-					/*
-				case 8: // Find objects within a set angular distance of a certain object WORKING
-					String object;
-					angDistance = 0;
-					
-					System.out.println("\nFinding objects within a set angular distance of an object...\n");
-					
-					if(totalStars == 0) { // returns error if there are no stars in database (therefore no objects)
-						System.out.println("No objects currently in the database!");
-						break;
-					} else if (totalStars == 1) { // returns error if there is only one object in database
-						if (star1.numberOfPlanets() == 0 && star2.numberOfPlanets() == 0) {
-							System.out.println("There is only one object currently in the database!");
-							break;
-						}
-					}
-					
-					do {
-						nameInt = 0;
-						loop = 0;
-						
-						System.out.println("Which object would you like to set as the origin?");
-						object = console.nextLine().toLowerCase(); // takes user input for origin object
-						
-						// assigns chosen object to a respective integer for easier use
-						if(object.equals(star1.getName())) nameInt = 1;
-						if(object.equals(star2.getName())) nameInt = 2;
-						if(object.equals(star1.getPlanetName(1))) nameInt = 3;
-						if(object.equals(star1.getPlanetName(2))) nameInt = 4;
-						if(object.equals(star2.getPlanetName(1))) nameInt = 5;
-						if(object.equals(star2.getPlanetName(2))) nameInt = 6;
-						
-						if (object == "") { // returns error if object name input is blank
-							System.out.println("Object name cannot be blank! Try again.");
-							loop = 1;
-						} else if(nameInt == 0) { // returns error if input object does not exist in the database
-							System.out.println("Object does not exist in the database! Try again.");
-							loop = 1;
-						}
-					} while (loop == 1);
-					
-					do {
-						loop = 0;
-						System.out.println("Which angular distance would you like to search between?");
-						angDistance = console.nextDouble(); // takes user input for angular distance range
-						console.nextLine();
-						
-						if (angDistance < 0 || angDistance > 180) { // returns error if input angular distance is outside valid range (0-180 deg)
-							System.out.println("Angular distance must be between 0 and 180 degrees! Try again.");
-							loop = 1;
-							break;
-						}
-					} while (loop == 1);
-					
-					
-					int objectWithinRange = 0;
-					switch(nameInt) {
-						case 1: //checks all objects for within angDistance if star1 was input
-							if(star2.starExists()) { // only runs if second object to compare exists
-								if(getAngularDistance(star1.getRa(), star2.getRa(), star1.getDec(), star2.getDec()) <= angDistance) { // if star2 is within angDistance of object
-									System.out.println("Star <"+star2.getName()+"> has angular distance <"+getAngularDistance(star1.getRa(), star2.getRa(), star1.getDec(), star2.getDec())+"> from "+object);
-									objectWithinRange = 1; // records if there exists at least 1 other object within range of the input object
-								}
-							}
-							if(star1.planetExists(1)) {
-								if(getAngularDistance(star1.getRa(), star1.getPlanetRa(1), star1.getDec(), star1.getPlanetDec(1)) <= angDistance) { // if planet 1 of star 1 is within angDistance of object...etc
-									System.out.println("Planet <"+star1.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star1.getRa(), star1.getPlanetRa(1), star1.getDec(), star1.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star1.planetExists(2)) {
-								if(getAngularDistance(star1.getRa(), star1.getPlanetRa(2), star1.getDec(), star1.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star1.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star1.getRa(), star1.getPlanetRa(2), star1.getDec(), star1.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(1)) {
-								if(getAngularDistance(star1.getRa(), star2.getPlanetRa(1), star1.getDec(), star2.getPlanetDec(1)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star1.getRa(), star2.getPlanetRa(1), star1.getDec(), star2.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(2)) {
-								if(getAngularDistance(star1.getRa(), star2.getPlanetRa(2), star1.getDec(), star2.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star1.getRa(), star2.getPlanetRa(2), star1.getDec(), star2.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							break;
-							
-						case 2: //checks all objects for within angDistance if star2 was input
-							if(star1.starExists()) {
-								if(getAngularDistance(star2.getRa(), star1.getRa(), star2.getDec(), star1.getDec()) <= angDistance) {
-									System.out.println("Star <"+star1.getName()+"> has angular distance <"+getAngularDistance(star2.getRa(), star1.getRa(), star2.getDec(), star1.getDec())+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star1.planetExists(1)) {
-								if(getAngularDistance(star2.getRa(), star1.getPlanetRa(1), star2.getDec(), star1.getPlanetDec(1)) <= angDistance) {
-									System.out.println("Planet <"+star1.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star2.getRa(), star1.getPlanetRa(1), star2.getDec(), star1.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star1.planetExists(2)) {
-								if(getAngularDistance(star2.getRa(), star1.getPlanetRa(2), star2.getDec(), star1.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star1.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star2.getRa(), star1.getPlanetRa(2), star2.getDec(), star1.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(1)) {
-								if(getAngularDistance(star2.getRa(), star2.getPlanetRa(1), star2.getDec(), star2.getPlanetDec(1)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star2.getRa(), star2.getPlanetRa(1), star2.getDec(), star2.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(2)) {
-								if(getAngularDistance(star2.getRa(), star2.getPlanetRa(2), star2.getDec(), star2.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star2.getRa(), star2.getPlanetRa(2), star2.getDec(), star2.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							break;
-							
-						case 3: //checks all objects for within angDistance if planet 1 of star 1 was input
-							if(star1.starExists()) {
-								if(getAngularDistance(star1.getPlanetRa(1), star1.getRa(), star1.getPlanetDec(1), star1.getDec()) <= angDistance) {
-									System.out.println("Star <"+star1.getName()+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(1), star1.getRa(), star1.getPlanetDec(1), star1.getDec())+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.starExists()) {
-								if(getAngularDistance(star1.getPlanetRa(1), star2.getRa(), star1.getPlanetDec(1), star2.getDec()) <= angDistance) {
-									System.out.println("Star <"+star2.getName()+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(1), star2.getRa(), star1.getPlanetDec(1), star2.getDec())+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star1.planetExists(2)) {
-								if(getAngularDistance(star1.getPlanetRa(1), star1.getPlanetRa(2), star1.getPlanetDec(1), star1.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star1.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(1), star1.getPlanetRa(2), star1.getPlanetDec(1), star1.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(1)) {
-								if(getAngularDistance(star1.getPlanetRa(1), star2.getPlanetRa(1), star1.getPlanetDec(1), star2.getPlanetDec(1)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(1), star2.getPlanetRa(1), star1.getPlanetDec(1), star2.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(2)) {
-								if(getAngularDistance(star1.getPlanetRa(1), star2.getPlanetRa(2), star1.getPlanetDec(1), star2.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(1), star2.getPlanetRa(2), star1.getPlanetDec(1), star2.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							break;
-							
-						case 4: //checks all objects for within angDistance if planet 2 of star 1 was input
-							if(star1.starExists()) {
-								if(getAngularDistance(star1.getPlanetRa(2), star1.getRa(), star1.getPlanetDec(2), star1.getDec()) <= angDistance) {
-									System.out.println("Star <"+star1.getName()+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(2), star1.getRa(), star1.getPlanetDec(2), star1.getDec())+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.starExists()) {
-								if(getAngularDistance(star1.getPlanetRa(2), star2.getRa(), star1.getPlanetDec(2), star2.getDec()) <= angDistance) {
-									System.out.println("Star <"+star2.getName()+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(2), star2.getRa(), star1.getPlanetDec(2), star2.getDec())+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star1.planetExists(1)) {
-								if(getAngularDistance(star1.getPlanetRa(2), star1.getPlanetRa(1), star1.getPlanetDec(2), star1.getPlanetDec(1)) <= angDistance) {
-									System.out.println("Planet <"+star1.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(2), star1.getPlanetRa(1), star1.getPlanetDec(2), star1.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(1)) {
-								if(getAngularDistance(star1.getPlanetRa(2), star2.getPlanetRa(1), star1.getPlanetDec(2), star2.getPlanetDec(1)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(2), star2.getPlanetRa(1), star1.getPlanetDec(2), star2.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(2)) {
-								if(getAngularDistance(star1.getPlanetRa(2), star2.getPlanetRa(2), star1.getPlanetDec(2), star2.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star1.getPlanetRa(2), star2.getPlanetRa(2), star1.getPlanetDec(2), star2.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							break;
-							
-						case 5: //checks all objects for within angDistance if planet 1 of star 2 was input
-							if(star1.starExists()) {
-								if(getAngularDistance(star2.getPlanetRa(1), star1.getRa(), star2.getPlanetDec(1), star1.getDec()) <= angDistance) {
-									System.out.println("Star <"+star1.getName()+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(1), star1.getRa(), star2.getPlanetDec(1), star1.getDec())+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.starExists()) {
-								if(getAngularDistance(star2.getPlanetRa(1), star2.getRa(), star2.getPlanetDec(1), star2.getDec()) <= angDistance) {
-									System.out.println("Star <"+star2.getName()+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(1), star2.getRa(), star2.getPlanetDec(1), star2.getDec())+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star1.planetExists(1)) {
-								if(getAngularDistance(star2.getPlanetRa(1), star1.getPlanetRa(1), star2.getPlanetDec(1), star1.getPlanetDec(1)) <= angDistance) {
-									System.out.println("Planet <"+star1.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(1), star1.getPlanetRa(1), star2.getPlanetDec(1), star1.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star1.planetExists(2)) {
-								if(getAngularDistance(star2.getPlanetRa(1), star1.getPlanetRa(2), star2.getPlanetDec(1), star1.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star1.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(1), star1.getPlanetRa(2), star2.getPlanetDec(1), star1.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(2)) {
-								if(getAngularDistance(star2.getPlanetRa(1), star2.getPlanetRa(2), star2.getPlanetDec(1), star2.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(1), star2.getPlanetRa(2), star2.getPlanetDec(1), star2.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							break;
-							
-						case 6: //checks all objects for within angDistance if planet 2 of star 2 was input
-							if(star1.starExists()) {
-								if(getAngularDistance(star2.getPlanetRa(2), star1.getRa(), star2.getPlanetDec(2), star1.getDec()) <= angDistance) {
-									System.out.println("Star <"+star1.getName()+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(2), star1.getRa(), star2.getPlanetDec(2), star1.getDec())+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.starExists()) {
-								if(getAngularDistance(star2.getPlanetRa(2), star2.getRa(), star2.getPlanetDec(2), star2.getDec()) <= angDistance) {
-									System.out.println("Star <"+star2.getName()+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(2), star2.getRa(), star2.getPlanetDec(2), star2.getDec())+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star1.planetExists(1)) {
-								if(getAngularDistance(star2.getPlanetRa(2), star1.getPlanetRa(1), star2.getPlanetDec(2), star1.getPlanetDec(1)) <= angDistance) {
-									System.out.println("Planet <"+star1.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(2), star1.getPlanetRa(1), star2.getPlanetDec(2), star1.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star1.planetExists(2)) {
-								if(getAngularDistance(star2.getPlanetRa(2), star1.getPlanetRa(2), star2.getPlanetDec(2), star1.getPlanetDec(2)) <= angDistance) {
-									System.out.println("Planet <"+star1.getPlanetName(2)+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(2), star1.getPlanetRa(2), star2.getPlanetDec(2), star1.getPlanetDec(2))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							if(star2.planetExists(1)) {
-								if(getAngularDistance(star2.getPlanetRa(2), star2.getPlanetRa(1), star2.getPlanetDec(2), star2.getPlanetDec(1)) <= angDistance) {
-									System.out.println("Planet <"+star2.getPlanetName(1)+"> has angular distance <"+getAngularDistance(star2.getPlanetRa(2), star2.getPlanetRa(1), star2.getPlanetDec(2), star2.getPlanetDec(1))+"> from "+object);
-									objectWithinRange = 1;
-								}
-							}
-							break;
-					}
-					
-					if(objectWithinRange == 0) System.out.println("No other objects within angular distance "+angDistance+" from "+object);
-					
-					break;
-					*/
 				default: // Quit program (or no valid option chosen)
 					System.out.print("Are you sure you want to quit? This will erase all database entries.");
 					skipQuit = 1; // skips default quit sequence
@@ -529,7 +270,12 @@ public class Interface {
 	// Takes right ascension and declination of both objects in degrees as input
 	// Returns angular distance in degree
 	public static double getAngularDistance(double ra, double ra2, double dec, double dec2) {
-		return Math.toDegrees(Math.acos(Math.cos(Math.toRadians(ra) - Math.toRadians(ra2))*Math.cos(Math.toRadians(dec))*Math.cos(Math.toRadians(dec2))+(Math.sin(Math.toRadians(dec))*Math.sin(Math.toRadians(dec2)))));
+		double raRad = Math.toRadians(ra);
+		double decRad = Math.toRadians(dec);
+		double ra2Rad = Math.toRadians(ra2);
+		double dec2Rad = Math.toRadians(dec2);
+		
+		return Math.toDegrees(Math.acos(Math.cos(raRad - ra2Rad)*Math.cos(decRad)*Math.cos(dec2Rad)+(Math.sin(decRad)*Math.sin(dec2Rad))));
 	}
 	
 	// returns true if at max stars, false if there is room for at least one star
@@ -673,9 +419,9 @@ public class Interface {
 			System.out.println("Right Ascension: ");
 			ra = console.nextDouble(); // stores user input of star right ascension
 			console.nextLine();
-			if (raWithinRange(ra)) 
+			if (!raWithinRange(ra)) 
 				System.out.println("Error. Value must be between 0 and 360"); // error for invalid right ascension
-		} while (raWithinRange(ra)); // prompts user again for right ascension if not within valid range
+		} while (!raWithinRange(ra)); // prompts user again for right ascension if not within valid range
 		return ra;
 	}
 	
@@ -685,9 +431,9 @@ public class Interface {
 			System.out.println("Declination:");
 			dec = console.nextDouble(); // stores user input of star declination
 			console.nextLine();
-			if (decWithinRange(dec)) 
+			if (!decWithinRange(dec)) 
 				System.out.println("Error. Value must be between -90 and 90"); // error for invalid right ascension
-		} while (decWithinRange(dec)); // prompts user again for declination if not within valid range
+		} while (!decWithinRange(dec)); // prompts user again for declination if not within valid range
 		return dec;
 	}
 	
@@ -775,9 +521,9 @@ public class Interface {
 			System.out.println("Right Ascension: ");
 			ra = console.nextDouble(); // stores user input of star right ascension
 			console.nextLine();
-			if (raWithinRange(ra)) 
+			if (!raWithinRange(ra)) 
 				System.out.println("Error. Value must be between 0 and 360"); // error for invalid right ascension
-		} while (raWithinRange(ra)); // prompts user again for right ascension if not within valid range
+		} while (!raWithinRange(ra)); // prompts user again for right ascension if not within valid range
 		return ra;
 	}
 	
@@ -787,21 +533,21 @@ public class Interface {
 			System.out.println("Declination:");
 			dec = console.nextDouble(); // stores user input of star declination
 			console.nextLine();
-			if (decWithinRange(dec)) 
+			if (!decWithinRange(dec)) 
 				System.out.println("Error. Value must be between -90 and 90"); // error for invalid right ascension
-		} while (decWithinRange(dec)); // prompts user again for declination if not within valid range
+		} while (!decWithinRange(dec)); // prompts user again for declination if not within valid range
 		return dec;
 	}
 	
 	public double inputAngularDistance() {
 		double angDist;
 		do {
-			System.out.println("Angular distance");
+			System.out.println("Angular distance:");
 			angDist = console.nextDouble();
 			console.nextLine();
-			if(angDistWithinRange(angDist)) 
+			if(!angDistWithinRange(angDist)) 
 				System.out.println("Angular distance must be between 0 and 180 degrees!");
-		} while (angDistWithinRange(angDist));
+		} while (!angDistWithinRange(angDist));
 		return angDist;
 	}
 	
@@ -876,7 +622,7 @@ public class Interface {
 			if(!(stars[i].getName().equals(origin))) { // only tests whether object is within distance if NOT same object (obvious reasons)
 				angDist = angularDistanceBetween(origin, stars[i].getName());
 				if(angDist <= range)
-					System.out.println("Star <" +stars[i].getName()+ "> has an angular distance <" +angDist+ "> from <" +origin);
+					System.out.println("Star <" +stars[i].getName()+ "> has an angular distance <" +angDist+ "> from <" +origin+ ">");
 			}
 		}
 		// prints planets in specified range of object
@@ -885,7 +631,7 @@ public class Interface {
 				if(!(stars[i].getPlanetName(j).equals(origin))) { // only tests whether object is within distance if NOT same object (obvious reasons)
 					angDist = angularDistanceBetween(origin, stars[i].getPlanetName(j));
 					if(angDist <= range)
-						System.out.println("Planet <" +stars[i].getPlanetName(j)+ "> has an angular distance <" +angDist+ "> from <" +origin);
+						System.out.println("Planet <" +stars[i].getPlanetName(j)+ "> has an angular distance <" +angDist+ "> from <" +origin+ ">");
 				}
 			}
 		}
@@ -917,31 +663,49 @@ public class Interface {
 		double raA, raB;
 		double decA, decB;
 		int objectAInd, objectBInd;
+		int objectAType, objectBType; // (-1) = star, any other number is the index of star which planet orbits
 		
 		objectAInd = inputStarNameMatches(objectA);
+		objectAType = (-1); 
 		if(objectAInd == (-1)) {
 			for(int i = 0; i<Star.totalStars(); i++) {
 				objectAInd = inputPlanetNameMatches(objectA, i);
 				if(objectAInd != (-1)) {
+					objectAType = i;
 					break;
 				}
 			}
 		}
 		
 		objectBInd = inputStarNameMatches(objectB);
+		objectBType = (-1);
 		if(objectBInd == (-1)) {
 			for(int i = 0; i<Star.totalStars(); i++) {
 				objectBInd = inputPlanetNameMatches(objectB, i);
 				if(objectBInd != (-1)) {
+					objectBType = i;
 					break;
 				}
 			}
 		}
 		
+		// if object type = (-1) then object was a star, and so ra and dec are pulled from star
+		// otherwise object was a planet, and so ra and dec are pulled from planet orbiting star of index objectInd
+		if(objectAType == (-1)) {
 		raA = stars[objectAInd].getRa();
-		raB = stars[objectBInd].getRa();
 		decA = stars[objectAInd].getDec();
+		} else {
+			raA = stars[objectAType].getPlanetRa(objectAInd);
+			decA = stars[objectAType].getPlanetDec(objectAInd);
+		}
+		
+		if(objectBType == (-1)) {
+		raB = stars[objectBInd].getRa();
 		decB = stars[objectBInd].getDec();
+		} else {
+			raB = stars[objectBType].getPlanetRa(objectBInd);
+			decB = stars[objectBType].getPlanetDec(objectBInd);
+		}
 		
 		return getAngularDistance(raA, raB, decA, decB);
 	}
