@@ -9,19 +9,22 @@ import java.io.File;
 import java.io.PrintWriter;
 
 public class Interface {
+//-------------------------------------------------------------------
+//-------------------------------------------------------------------
+// INSTANCE VARIABLES
 	
 	final private static int MAX_STARS = 2;
 	private Star[] stars = new Star[MAX_STARS];
-	//private int totalStars = 0;
 	private static Scanner console = new Scanner(System.in);
 	private static File inputFile;
 	private static File outputFile;
 	private static Scanner input;
 	private static PrintWriter output;
 	
+//-------------------------------------------------------------------
+//-------------------------------------------------------------------
+// PROGRAM FLOW
 	private void run(){
-		
-		//Scanner console = new Scanner(System.in);
 		
 		int end = 1; // variable for user to quit program, will not loop menu if 0
 		int skipQuit = 0; // if 1, skips default quit sequence
@@ -35,7 +38,6 @@ public class Interface {
 			String name, sType, orbitedStar; // variables holding user input for use in actions
 			double ra = 0, dec = 0;
 			int loop; // variable used to determine running of various while loops
-			double angDistance;
 			
 			showMenu();
 			int action = console.nextInt(); // stores users choice of action
@@ -158,6 +160,7 @@ public class Interface {
 					int starInt = inputStarNameMatches(name);
 					
 					listPlanets(starInt);
+					System.out.println("These planets orbit " +stars[starInt].getName());
 					
 					break;
 					
@@ -165,7 +168,7 @@ public class Interface {
 					String objectA, objectB;
 					
 					
-					if(noStars()) break;
+					if(noStars()) break; // quits to menu and throws error if no objects in database
 					if(onlyOneObject()) {
 						System.out.println("Must be at least two objects in the database. Please add more.");
 						break;
@@ -261,17 +264,20 @@ public class Interface {
 			
 		} while (end!=0); //if end = 0 then program will quit
 		
+		
 		System.out.println("Goodbye!");
 		console.close();
-		input.close();
-		output.close();
 	}
-	
+//-------------------------------------------------------------------
+//-------------------------------------------------------------------
+// MAIN
 	public static void main(String[] args) {
 		Interface intFace = new Interface();
 		intFace.run();
 	}
-	
+//-------------------------------------------------------------------
+//-------------------------------------------------------------------
+// METHODS
 	public static void showMenu() {
 		// menu of actions for user to pick
 					System.out.println("*********************************************");
@@ -322,6 +328,7 @@ public class Interface {
 		return Math.toDegrees(Math.acos(Math.cos(raRad - ra2Rad)*Math.cos(decRad)*Math.cos(dec2Rad)+(Math.sin(decRad)*Math.sin(dec2Rad))));
 	}
 	
+	// sets all stars and planets in database to default values (effectively deletes)
 	public void clearDatabase() {
 		for(int i = 0; i<Star.totalStars(); i++) {
 			stars[i].deleteStar();
@@ -461,7 +468,7 @@ public class Interface {
 		return (-1);
 	}
 		
-	
+	// takes and returns user input for star ra, returns error and loops prompt if ra outside range
 	public double inputStarRa() {
 		double ra;
 		//Scanner console = new Scanner(System.in);
@@ -475,6 +482,7 @@ public class Interface {
 		return ra;
 	}
 	
+	// takes and returns user input for star dec, returns error and loops prompt if dec outside range
 	public double inputStarDec() {
 		double dec;
 		do {
@@ -487,6 +495,7 @@ public class Interface {
 		return dec;
 	}
 	
+	// takes and returns user input for star sType, returns error and loops prompt if sType does not fit format
 	public String inputStarSType() {
 		String sType;
 		do {
@@ -499,6 +508,7 @@ public class Interface {
 		return sType;
 	}
 	
+	// takes name, ra, dec, sType and instantiates a star in first empty array slot with these values
 	public void createStar(String name, double ra, double dec, String sType) {
 		for(int i = 0; i<MAX_STARS; i++) { 
 			if(!(stars[i].starExists())) { //creates a star in first empty array element
@@ -508,6 +518,7 @@ public class Interface {
 		}
 	}
 	
+	// takes input of a planets orbited star, returns index of star if found, (-1) if not and throws error or if star at max planets
 	public int inputOrbitedStar() {
 		int starIndex; //integer form of the input star given it matches a star (1, 2) loops while 0
 		do {
@@ -563,6 +574,7 @@ public class Interface {
 			return name;
 		}
 	
+	// takes and returns user input for planet ra, returns error and loops prompt if ra outside range
 	public double inputPlanetRa() {
 		double ra;
 		do { 
@@ -575,6 +587,7 @@ public class Interface {
 		return ra;
 	}
 	
+	// takes and returns user input for planet dec, returns error and loops prompt if dec outside range
 	public double inputPlanetDec() {
 		double dec;
 		do {
@@ -587,6 +600,7 @@ public class Interface {
 		return dec;
 	}
 	
+	// takes and returns user input for angular distance, returns error and loops prompt if outside range
 	public double inputAngularDistance() {
 		double angDist;
 		do {
@@ -661,6 +675,7 @@ public class Interface {
 		}
 	}
 	
+	//takes an origin object and range of angular dist from origin and lists all objects within this range
 	public void listObjectsWithinDistance(String origin, double range) {
 		
 		double angDist;
@@ -758,6 +773,7 @@ public class Interface {
 		return getAngularDistance(raA, raB, decA, decB);
 	}
 	
+	//opens an input file for reading with name given by fileName, creates if doesnt exist
 	public void openFileForReading(String fileName) {
 		inputFile = new File(fileName);
 		
@@ -770,6 +786,7 @@ public class Interface {
 		}
 	}
 	
+	//opens an output file for writing with name given by fileName, creates if doesnt exist
 	public void openFileForWriting(String fileName) {
 		outputFile = new File(fileName);
 		try {
@@ -781,6 +798,8 @@ public class Interface {
 		}
 	}
 	
+	// reads a file line by line as long as there is still text to be read, stores data from current like in
+	// string array 'data', creates object with input data before reading next line and repeating
 	public void readFile() {
 		String[] data = new String[5];
 		while(input.hasNext()) {
@@ -800,6 +819,7 @@ public class Interface {
 		
 	}
 	
+	// takes a string array and creates an object using information from 'data'
 	public void enterDataFromFile(String[] data) {
 		String objectType, orbitedStar, name, sType;
 		int orbitedStarInt;
@@ -811,18 +831,21 @@ public class Interface {
 		ra = Double.parseDouble(data[2]);
 		dec = Double.parseDouble(data[3]);
 		
-		if(objectType.equals("star")) {
+		if(objectType.equals("star") && (Star.totalStars() != MAX_STARS)) {
 			sType = data[4].toUpperCase();
 			createStar(name, ra, dec, sType);
 			System.out.println("STAR " +name+ " imported!");
 		} else if(objectType.equals("planet")) {
 			orbitedStar = data[4];
 			orbitedStarInt = inputStarNameMatches(orbitedStar);
-			stars[orbitedStarInt].createPlanet(name, ra, dec);
-			System.out.println("PLANET " +name+ " imported!");
+			if(orbitedStarInt != (-1) && !stars[orbitedStarInt].atMaxPlanets()) {
+				stars[orbitedStarInt].createPlanet(name, ra, dec);
+				System.out.println("PLANET " +name+ " imported!");
+			}
 		}
 	}
 	
+	// copies data from each object in the database and writes it into an external file, object by object
 	public void writeFile() {
 		String[] data = new String[5];
 		
@@ -850,14 +873,18 @@ public class Interface {
 		}
 	}
 	
+	// writes data of one object into external file and prints that the object was exported
 	public void enterDataIntoFile(String[] data) {
 		output.println(data[0]+" "+data[1]+" "+data[2]+" "+data[3]+" "+data[4]);
 		System.out.println(data[0]+ " " +data[1]+ " exported!");
 	}
 	
+	// closes input file
 	public void closeFileForReading() {
 		input.close();
 	}
+	
+	// closes output file
 	public void closeFileForWriting() {
 		output.close();
 	}

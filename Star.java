@@ -4,7 +4,9 @@
 //
 
 public class Star {
-
+//-------------------------------------------------------------------
+//-------------------------------------------------------------------
+// INSTANCE VARIABLES
 	final private static int MAX_PLANETS = 2;
 	private static int totalStars = 0;
 	private int totalPlanets = 0;
@@ -12,14 +14,10 @@ public class Star {
 	private String name, sType;
 	private double ra, dec;
 	private Planet[] planets = new Planet[MAX_PLANETS];
-	
-	/*
-	// returns number of stars currently in the database
-	public static int numberOfStars() {
-		return numberOfStars;
-	}
-	*/
-	
+
+//-------------------------------------------------------------------
+//-------------------------------------------------------------------
+// METHODS
 	// default star constructor
 	public Star() {
 		this.setName("");
@@ -150,9 +148,7 @@ public class Star {
 	// takes integer of planet as input and returns planet declination
 	public double getPlanetDec(int n) {
 		return planets[n].getDec();
-		
 	}
-	
 	
 	public String getName() {
 		return name;
@@ -185,13 +181,5 @@ public class Star {
 	public void setSType(String sType) {
 		this.sType = sType;
 	}
-	
-	/*
-	public static String checkForMaxStars() {
-		if (Star.numberOfStars == 2)
-			return ("There are already 2 stars in the database! Please delete one and try again.");
-		return;
-	}
-	*/
 	
 }
