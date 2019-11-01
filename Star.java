@@ -113,8 +113,9 @@ public class Star {
 	// creates a new planet in orbit around star method is called on taking planet name, right ascension and declination as input
 	public void createPlanet(String name, double ra, double dec) {
 		for(int planet = 0; planet<Star.getMaxPlanets(); planet++) { //adds planet in first vacant array position
-			if(this.getPlanetName(planet) == "") {
+			if(getPlanetName(planet) == "") {
 				planets[planet].setPlanet(name, ra, dec);
+				totalPlanets += 1;
 				break;
 			}
 		}
@@ -135,6 +136,7 @@ public class Star {
 		return planets[n].getDec();
 		
 	}
+	
 	
 	public String getName() {
 		return name;
