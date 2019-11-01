@@ -5,6 +5,8 @@
 //
 
 import java.util.Scanner;
+import java.io.File;
+import java.io.PrintWriter;
 
 public class Interface {
 	
@@ -12,6 +14,10 @@ public class Interface {
 	private Star[] stars = new Star[MAX_STARS];
 	//private int totalStars = 0;
 	private static Scanner console = new Scanner(System.in);
+	private static File inputFile;
+	private static File outputFile;
+	private static Scanner input;
+	private static PrintWriter output;
 	
 	private void run(){
 		
@@ -22,6 +28,7 @@ public class Interface {
 		for(int i = 0; i<MAX_STARS; i++) { // fills array with blank star objects
 			stars[i] = new Star();
 		}
+		
 			
 		do {
 			
@@ -201,6 +208,36 @@ public class Interface {
 					listObjectsWithinDistance(objectA, range);
 					
 					break;
+					
+				case 9: // import star/planet info from file
+					String[] data = new String[5];
+					String objectType;
+					
+					openFile();
+					data = readFile();
+					
+					objectType = data[0];
+					name = data[1];
+					ra = Double.parseDouble(data[2]);
+					dec = Double.parseDouble(data[3]);
+					if(objectType.equals("STAR")) {
+						sType = data[4];
+						createStar(name, ra, dec, sType);
+						System.out.println("Star " +name+ " imported!");
+					} else if(objectType.equals("PLANET")) {
+						orbitedStar = data[4];
+						orbitedStarInt = inputStarNameMatches(orbitedStar);
+						stars[orbitedStarInt].createPlanet(name, ra, dec);
+						System.out.println("Planet " +name+ " imported!");
+					}
+					
+					break;
+					
+				case 10: // export star/planet info to file
+					
+					
+					
+					
 				default: // Quit program (or no valid option chosen)
 					System.out.print("Are you sure you want to quit? This will erase all database entries.");
 					skipQuit = 1; // skips default quit sequence
@@ -223,6 +260,8 @@ public class Interface {
 		
 		System.out.println("Goodbye!");
 		console.close();
+		input.close();
+		output.close();
 	}
 	
 	public static void main(String[] args) {
@@ -236,16 +275,18 @@ public class Interface {
 					System.out.println("Welcome to your astronomical object database.");
 					System.out.println("*********************************************");
 					System.out.println("Please choose an action:");
-					System.out.println("1 - Add a star");
-					System.out.println("2 - Add a planet");
-					System.out.println("3 - Delete a star");
-					System.out.println("4 - Delete a planet");
-					System.out.println("5 - Display list of all objects");
-					System.out.println("6 - Display list of planets orbitting a star");
-					System.out.println("7 - Find angular distance between 2 objects");
-					System.out.println("8 - Find objects within a set angular distance of a certain object");
+					System.out.println("1 -  Add a star");
+					System.out.println("2 -  Add a planet");
+					System.out.println("3 -  Delete a star");
+					System.out.println("4 -  Delete a planet");
+					System.out.println("5 -  Display list of all objects");
+					System.out.println("6 -  Display list of planets orbitting a star");
+					System.out.println("7 -  Find angular distance between 2 objects");
+					System.out.println("8 -  Find objects within a set angular distance of a certain object");
+					System.out.println("9 -  Import star and planet info from file");
+					System.out.println("10 - Export star and planet info to file");
 					System.out.println();
-					System.out.println("9 - Quit program\n");
+					System.out.println("0 - Quit program\n");
 	}
 	
 	// Checks whether a given right ascension (ra) is within the valid range 0 <= ra <= 360
@@ -708,5 +749,40 @@ public class Interface {
 		}
 		
 		return getAngularDistance(raA, raB, decA, decB);
+	}
+	
+	public void openFile() {
+		try {
+			input = new Scanner(new File("input.txt"));
+		} 
+		catch(Exception e) {
+			System.out.println("File could not be found.");
+		}
+	}
+	
+	public String[] readFile() {
+		String[] data = new String[5];
+		while(input.hasNext()) {
+			
+			data[0] = input.next(); // object type, star or planet
+			data[1] = input.next(); // object name
+			data[2] = input.next(); // object right ascension
+			data[3] = input.next(); // object declination
+			if(data[0].equals("STAR")) { // if object type = star, read sType, if planet, read orbitedStar
+				data[4] = input.next(); // sType if object was a star
+			} else if(data[0].equals("PLANET")) {
+				data[4] = input.next(); // orbitedStar if object was a planet
+			}
+			
+		}
+		return data;
+	}
+	
+	public void writeFile() {
+		
+	}
+	
+	public void closeFile() {
+		input.close();
 	}
 }
