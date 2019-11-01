@@ -150,193 +150,57 @@ public class Interface {
 					listPlanets(starInt);
 					
 					break;
-					/*
-					
-				case 6: // Display list of planets orbiting a star
-
-					if(totalStars == 0) { // error check for if there are no stars in database (therefore no planets)
-						System.out.println("No planets currently in the database!");
-						break;
-					} else if(star2.numberOfPlanets() == 0 && star1.numberOfPlanets() == 0) {  // error check for if there are no planets in database
-						System.out.println("No planets currently in the database!");
-						break;
-					}
-					System.out.println("\nDisplaying planets orbitting a star...\n");
-					
-					
-					do {
-						loop = 0;
-						
-						System.out.println("Which star would you like to find the orbiting planets of?");
-						//prints each star if they exist
-						if(star1.starExists() && star1.numberOfPlanets() > 0) System.out.println(star1.getName()); 
-						if(star2.starExists() && star1.numberOfPlanets() > 0) System.out.println(star2.getName());
-						
-						name = console.nextLine().toLowerCase(); //takes user input for star name and converts to lower case
-					
-						if(name == "") { // error check for if input is blank
-							System.out.println("Star name must not be blank!");
-							loop = 1;
-						} else if(!(name.equals(star1.getName())) && !(name.equals(star2.getName()))) { // error check for if input is not a recognized star
-							System.out.println("The star entered does not exist in the database");
-							loop = 1;
-						} else if(name.equals(star1.getName()) && star1.numberOfPlanets() == 0) { // error check if star 1 chosen & has no orbitting planets
-							System.out.println("This star has no orbitting planets!");
-							loop = 1;
-						} else if(name.equals(star2.getName()) && star2.numberOfPlanets() == 0) { // error check if star 2 chosen & has no orbitting planets
-							System.out.println("This star has no orbitting planets!");
-							loop = 1;
-						}
-					} while (loop == 1);
-					
-					// lists planets of chosen star if they exist
-					if(name.equals(star1.getName())) {
-						System.out.println("Planets orbitting "+name+":");
-						for(int i = 1; i <=2; i++) {
-							if(star1.planetExists(i)) System.out.println("Planet <"+star1.getPlanetName(i)+">: coordinate <"+star1.getPlanetRa(i)+"> <"
-									+star1.getPlanetDec(i)+">");
-						}
-					} else if(name.equals(star2.getName())) {
-						System.out.println("Planets orbitting "+name+":");
-						for(int i = 1; i <=2; i++) {
-							if(star1.planetExists(i)) System.out.println("Planet <"+star2.getPlanetName(i)+">: coordinate <"+star2.getPlanetRa(i)+"> <"
-									+star1.getPlanetDec(i)+">");
-						}
-					}
-					
-					break;
-					
 					
 				case 7: // Find angular distance between 2 objects
 					String objectA, objectB;
-					double ra2 = 0, dec2 = 0; // right ascension and declination of second object
 					
-					System.out.println("\nFinding angular distance between 2 objects...\n");
 					
-					if(totalStars == 0) { // error check for if there are no stars in database (therefore no objects)
-						System.out.println("No objects currently in the database!");
+					if(noStars()) break;
+					if(onlyOneObject()) {
+						System.out.println("Must be at least two objects in the database. Please add more.");
 						break;
-					} else if (totalStars == 1) { // error check for if there is only one object in database
-						if (star1.numberOfPlanets() == 0 && star2.numberOfPlanets() == 0) { 
-							System.out.println("There is only one object in the database!");
-							break;
-						}
 					}
+					
+					System.out.println("Ang. distance between which two objects");
 					
 					do {
-						nameInt = 0;
 						loop = 0;
-						System.out.println("Which two objects do you want to find the angular distance between?");
-						System.out.println("Object 1:");
-						
-						objectA = console.nextLine().toLowerCase(); // takes user input for first object
-						
-						// assigns chosen object to a respective integer for easier use
-						if(objectA.equals(star1.getName())) nameInt = 1;
-						if(objectA.equals(star2.getName())) nameInt = 2;
-						if(objectA.equals(star1.getPlanetName(1))) nameInt = 3;
-						if(objectA.equals(star1.getPlanetName(2))) nameInt = 4;
-						if(objectA.equals(star2.getPlanetName(1))) nameInt = 5;
-						if(objectA.equals(star2.getPlanetName(2))) nameInt = 6;
-						
-						if (objectA == "") { // returns error if object input is blank
-							System.out.println("Object name cannot be blank! Try again.");
-							loop = 1;
-						} else if(nameInt == 0) { // returns error if object does not exist in the database
-							System.out.println("Object does not exist in the database! Try again.");
-							loop = 1;
-						}
-					} while (loop == 1);
-						
-					// gets values for right ascension and declination of object A
-					switch(nameInt) {
-					case 1:
-						ra = star1.getRa();
-						dec = star1.getDec();
-						break;
-					case 2:
-						ra = star2.getRa();
-						dec = star2.getDec();
-						break;
-					case 3:
-						ra = star1.getPlanetRa(1);
-						dec = star1.getPlanetDec(1);
-						break;
-					case 4:
-						ra = star1.getPlanetRa(2);
-						dec = star1.getPlanetDec(2);
-						break;
-					case 5:
-						ra = star2.getPlanetRa(1);
-						dec = star2.getPlanetDec(1);
-						break;
-					case 6:
-						ra = star2.getPlanetRa(2);
-						dec = star2.getPlanetDec(2);
-						break;
-					}
+						System.out.println("Enter first object:");
+						objectA = inputObjectName(2);
+						System.out.println("Enter second object:");
+						objectB = inputObjectName(2);
+						if(objectsAreIdentical(objectA,objectB)) loop = 1;
+					} while(loop == 1);
 					
-					do {
-						nameInt = 0;
-						loop = 0;
-						System.out.println("Object 2:");
-						
-						objectB = console.nextLine().toLowerCase(); // takes user input for first object
+					System.out.println("Angular distance: " +angularDistanceBetween(objectA, objectB));
 					
-						// assigns chosen object to a respective integer for easier use
-						if(objectB.equals(star1.getName())) nameInt = 1;
-						if(objectB.equals(star2.getName())) nameInt = 2;
-						if(objectB.equals(star1.getPlanetName(1))) nameInt = 3;
-						if(objectB.equals(star1.getPlanetName(2))) nameInt = 4;
-						if(objectB.equals(star2.getPlanetName(1))) nameInt = 5;
-						if(objectB.equals(star2.getPlanetName(2))) nameInt = 6;
-						
-						if (objectB == "") { // returns error is object input is blank
-							System.out.println("Object name cannot be blank! Try again.");
-							loop = 1;
-						} else if(nameInt == 0) { // returns error if object does not exist in database
-							System.out.println("Object does not exist in the database! Try again.");
-							loop = 1;
-						} else if(objectA.equals(objectB)) { // returns error if object input is the same as the first object
-							System.out.println("Cannot find distance to the same object! Try again.");
-						}
-					} while (loop == 1);
-					
-					// gets values for right ascension and declination of object B
-					switch(nameInt) {
-						case 1:
-							ra2 = star1.getRa();
-							dec2 = star1.getDec();
-							break;
-						case 2:
-							ra2 = star2.getRa();
-							dec2 = star2.getDec();
-							break;
-						case 3:
-							ra2 = star1.getPlanetDec(1);
-							dec2 = star1.getPlanetDec(1);
-							break;
-						case 4:
-							ra2 = star1.getPlanetDec(2);
-							dec2 = star1.getPlanetDec(2);
-							break;
-						case 5:
-							ra2 = star2.getPlanetDec(1);
-							dec2 = star2.getPlanetDec(1);
-							break;
-						case 6:
-							ra2 = star2.getPlanetDec(2);
-							dec2 = star2.getPlanetDec(2);
-							break;
-					}
-					
-					angDistance = getAngularDistance(ra, ra2, dec, dec2);
-					
-					System.out.println("For "+objectA+" and "+objectB+":");
-					System.out.println("Angular distance: <"+angDistance+">");
-						
 					break;
 					
+				case 8: // Find objects within a set angular distance of a certain object 
+					double range;
+					
+					if(noStars()) break;
+					if(onlyOneObject()) {
+						System.out.println("Must be at least two objects in the database. Please add more.");
+						break;
+					}
+					
+					System.out.println("\nFinding objects within a set angular distance of an object...\n");
+					
+					loop = 0;
+					System.out.println("Which object do you want to measure from?");
+					listStars();
+					listAllPlanets();
+					objectA = inputObjectName(2);
+					
+					System.out.println("What distance do you want to measure between?");
+					range = inputAngularDistance();
+					
+					listObjectsWithinDistance(objectA, range);
+					
+					break;
+					
+					/*
 				case 8: // Find objects within a set angular distance of a certain object WORKING
 					String object;
 					angDistance = 0;
@@ -645,14 +509,20 @@ public class Interface {
 	
 	// Checks whether a given right ascension (ra) is within the valid range 0 <= ra <= 360
 	// Returns true if valid, false otherwise.
-	public static boolean raOutsideRange(double ra) {
-		return (ra < 0 || ra > 360);
+	public static boolean raWithinRange(double ra) {
+		return (ra >= 0 && ra <= 360);
 	}
 		
 	// Checks whether a given declination (dec) is within the valid range -90 <= dec <= 90
 	// Returns true if valid, false otherwise.
-	public static boolean decOutsideRange(double dec) {
-		return (dec < (-90) || dec > (90));
+	public static boolean decWithinRange(double dec) {
+		return (dec >= (-90) && dec <= (90));
+	}
+	
+	// Checks whether a given angular distance (angDist) is within the valid range 0 <= angDist <= 180
+	// Returns true if valid, false otherwise.
+	public static boolean angDistWithinRange(double angDist) {
+		return (angDist >= 0 && angDist <= 180);
 	}
 	
 	// Gets the angular distance between two objects in the database
@@ -684,6 +554,66 @@ public class Interface {
 			if(stars[i].totalPlanets() != 0) return false; 
 		}
 		return true;
+	}
+	
+	// returns true if only 1 object (therefore only 1 star) exists in database, returns false if none or more than one object exists
+	public boolean onlyOneObject() {
+		return((Star.totalStars() == 1) && noPlanets());
+	}
+	
+	// takes names of two objects and compares them, returns true if objects have the same name (i.e. same objects) and false if names are different
+	public boolean objectsAreIdentical(String objectA, String objectB) {
+		if(objectA.equals(objectB)) {
+			System.out.println("You cannot enter the same object twice!");
+			return true;
+		}
+		return false;
+	}
+	
+	// takes and returns users input object name, option 1 will print error and loop prompt if 
+	// the object already exists, option 2 will quit loop if object name exists
+	public String inputObjectName(int option) {
+		int loop;
+		int objectIndex;
+		String name = "";
+		do {
+			objectIndex = (-1);
+			loop = 0;
+			System.out.println("Object name: ");
+			name = console.nextLine().toLowerCase(); // stores user input of star name
+			if (name.isEmpty()) {
+				System.out.println("Object name must not be blank!"); // error check, if user enters a blank name
+				loop = 1;
+				continue;
+			}
+			
+			for(int i = 0; i<Star.totalStars(); i++) {
+				if(inputPlanetNameMatches(name, i) != (-1)) {
+					objectIndex = inputPlanetNameMatches(name, i);
+					break;
+				}
+			}
+			if(objectIndex == (-1) ) {
+				if(inputStarNameMatches(name) != (-1)) {
+					if (option == 2) { // if deleting star, or adding planet, matching name will stop loops
+						loop = 0;
+					} else if (option == 1) { // if adding star, matching name will loop and print error
+						System.out.println("This star already exists in the database! Please enter a different name"); // if there exists a star name, checks if it is the same as user input	
+						loop = 1;
+					}
+				}
+			} else {
+				if (option == 2) { // if deleting star, or adding planet, matching name will stop loops
+					loop = 0;
+				} else if (option == 1) { // if adding star, matching name will loop and print error
+					System.out.println("This planet already exists in the database! Please enter a different name"); // if there exists a star name, checks if it is the same as user input	
+					loop = 1;
+				}
+			}
+				
+		} while (loop == 1);
+		return name;
+		
 	}
 	
 	// takes and returns users input star name, option 1 (adding star) will print error and loop prompt if 
@@ -743,9 +673,9 @@ public class Interface {
 			System.out.println("Right Ascension: ");
 			ra = console.nextDouble(); // stores user input of star right ascension
 			console.nextLine();
-			if (raOutsideRange(ra)) 
+			if (raWithinRange(ra)) 
 				System.out.println("Error. Value must be between 0 and 360"); // error for invalid right ascension
-		} while (raOutsideRange(ra)); // prompts user again for right ascension if not within valid range
+		} while (raWithinRange(ra)); // prompts user again for right ascension if not within valid range
 		return ra;
 	}
 	
@@ -755,9 +685,9 @@ public class Interface {
 			System.out.println("Declination:");
 			dec = console.nextDouble(); // stores user input of star declination
 			console.nextLine();
-			if (decOutsideRange(dec)) 
+			if (decWithinRange(dec)) 
 				System.out.println("Error. Value must be between -90 and 90"); // error for invalid right ascension
-		} while (decOutsideRange(dec)); // prompts user again for declination if not within valid range
+		} while (decWithinRange(dec)); // prompts user again for declination if not within valid range
 		return dec;
 	}
 	
@@ -845,9 +775,9 @@ public class Interface {
 			System.out.println("Right Ascension: ");
 			ra = console.nextDouble(); // stores user input of star right ascension
 			console.nextLine();
-			if (raOutsideRange(ra)) 
+			if (raWithinRange(ra)) 
 				System.out.println("Error. Value must be between 0 and 360"); // error for invalid right ascension
-		} while (raOutsideRange(ra)); // prompts user again for right ascension if not within valid range
+		} while (raWithinRange(ra)); // prompts user again for right ascension if not within valid range
 		return ra;
 	}
 	
@@ -857,10 +787,22 @@ public class Interface {
 			System.out.println("Declination:");
 			dec = console.nextDouble(); // stores user input of star declination
 			console.nextLine();
-			if (decOutsideRange(dec)) 
+			if (decWithinRange(dec)) 
 				System.out.println("Error. Value must be between -90 and 90"); // error for invalid right ascension
-		} while (decOutsideRange(dec)); // prompts user again for declination if not within valid range
+		} while (decWithinRange(dec)); // prompts user again for declination if not within valid range
 		return dec;
+	}
+	
+	public double inputAngularDistance() {
+		double angDist;
+		do {
+			System.out.println("Angular distance");
+			angDist = console.nextDouble();
+			console.nextLine();
+			if(angDistWithinRange(angDist)) 
+				System.out.println("Angular distance must be between 0 and 180 degrees!");
+		} while (angDistWithinRange(angDist));
+		return angDist;
 	}
 	
 	// takes name of star as a String and deletes it, prints completion message,
@@ -914,6 +856,7 @@ public class Interface {
 		}
 	}
 	
+	// takes the stars array index and prints all planets in orbit around the star
 	public void listPlanets(int star) {
 		for(int i = 0; i<stars[star].totalPlanets(); i++) {
 			String starName = stars[star].getName();
@@ -921,6 +864,38 @@ public class Interface {
 			double ra = stars[star].getPlanetRa(i);
 			double dec = stars[star].getPlanetDec(i);
 			System.out.println("PLANET " +name+ " " +ra+ " " +dec+ " " +starName);
+		}
+	}
+	
+	public void listObjectsWithinDistance(String origin, double range) {
+		
+		double angDist;
+		
+		// prints stars within specified range of object
+		for(int i = 0; i<Star.totalStars(); i++) {
+			if(!(stars[i].getName().equals(origin))) { // only tests whether object is within distance if NOT same object (obvious reasons)
+				angDist = angularDistanceBetween(origin, stars[i].getName());
+				if(angDist <= range)
+					System.out.println("Star <" +stars[i].getName()+ "> has an angular distance <" +angDist+ "> from <" +origin);
+			}
+		}
+		// prints planets in specified range of object
+		for(int i = 0; i<Star.totalStars(); i++) {
+			for(int j = 0; j<stars[i].totalPlanets(); j++) {
+				if(!(stars[i].getPlanetName(j).equals(origin))) { // only tests whether object is within distance if NOT same object (obvious reasons)
+					angDist = angularDistanceBetween(origin, stars[i].getPlanetName(j));
+					if(angDist <= range)
+						System.out.println("Planet <" +stars[i].getPlanetName(j)+ "> has an angular distance <" +angDist+ "> from <" +origin);
+				}
+			}
+		}
+		
+	}
+	
+	// prints all planets in orbit around every star
+	public void listAllPlanets() {
+		for(int i = 0; i<Star.totalStars(); i++) {
+			listPlanets(i);
 		}
 	}
 	
@@ -935,5 +910,39 @@ public class Interface {
 				System.out.println("STAR " +name+ " " +ra+ " " +dec+ " " +sType);
 			}
 		}
+	}
+	
+	// takes names of two objects in the database and returns the angular distance between them
+	public double angularDistanceBetween(String objectA, String objectB) {
+		double raA, raB;
+		double decA, decB;
+		int objectAInd, objectBInd;
+		
+		objectAInd = inputStarNameMatches(objectA);
+		if(objectAInd == (-1)) {
+			for(int i = 0; i<Star.totalStars(); i++) {
+				objectAInd = inputPlanetNameMatches(objectA, i);
+				if(objectAInd != (-1)) {
+					break;
+				}
+			}
+		}
+		
+		objectBInd = inputStarNameMatches(objectB);
+		if(objectBInd == (-1)) {
+			for(int i = 0; i<Star.totalStars(); i++) {
+				objectBInd = inputPlanetNameMatches(objectB, i);
+				if(objectBInd != (-1)) {
+					break;
+				}
+			}
+		}
+		
+		raA = stars[objectAInd].getRa();
+		raB = stars[objectBInd].getRa();
+		decA = stars[objectAInd].getDec();
+		decB = stars[objectBInd].getDec();
+		
+		return getAngularDistance(raA, raB, decA, decB);
 	}
 }
